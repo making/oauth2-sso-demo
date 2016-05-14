@@ -1,4 +1,3 @@
-auth-server: https://github.com/login
 server:
   port: 8080
 security:
@@ -6,13 +5,13 @@ security:
     enabled: false
   oauth2:
     client:
-      client-id: bd1c0a783ccdd1c9b9e4
-      client-secret: 1a9030fbca47a5b2c28e92f19050bb77824b5ad1
-      access-token-uri: ${auth-server}/oauth/access_token
-      user-authorization-uri: ${auth-server}/oauth/authorize
-      scope: user
+      client-id: 746653690954-e97hg708dhbqb050nsl0obtfsh3ocktl.apps.googleusercontent.com
+      client-secret: 355LU-Fj7s_IGrkq--hYRIX2
+      access-token-uri: https://www.googleapis.com/oauth2/v3/token
+      user-authorization-uri: https://accounts.google.com/o/oauth2/auth
+      scope: profile,email
     resource:
-      user-info-uri: https://api.github.com/user
+      user-info-uri: https://www.googleapis.com/plus/v1/people/me
 logging:
   level:
     org.springframework.security: DEBUG

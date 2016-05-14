@@ -2,11 +2,11 @@
 
 This demo app consists of following three components:
 
-* Authorization ... OAuth2 [Authorization Server](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-security-oauth2-authorization-server). Github API is used.
+* Authorization ... OAuth2 [Authorization Server](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-security-oauth2-authorization-server). Google API is used.
 * [Resource](resource) ... OAuth2 [Resource Server](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-security-oauth2-resource-server). Provides REST API.
 * [UI](ui) ... Web UI using [SSO](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-security-oauth2-single-sign-on) based on OAuth2
 
-![image](https://qiita-image-store.s3.amazonaws.com/0/1852/3be6b603-68d6-97b0-d9de-b0d07bfeca37.png)
+![image](https://qiita-image-store.s3.amazonaws.com/0/1852/8310be66-f56a-677b-0554-b4d51dfe05d8.png)
 
 
 ## Variants
