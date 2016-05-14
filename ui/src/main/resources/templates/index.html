@@ -13,18 +13,41 @@
     <div class="uk-width-3-5">
         <h1>Demo</h1>
 
-        <form th:action="@{/messages}" class="uk-panel uk-panel-box uk-form" method="post">
+        <form th:action="@{/messages}" class="uk-panel uk-panel-box uk-form" method="post"
+              onsubmit="return postMessage(this);">
             <input class="uk-form-large" type="text" name="text" placeholder="Message"/>
             <button class="uk-button uk-button-primary uk-button-large">Send</button>
         </form>
         <h2>Messages</h2>
-        <div class="uk-panel uk-panel-box" th:each="message : ${messages}">
-            <h3 class="uk-panel-title"><span th:text="${message.username}"></span> @ <span
-                    th:text="${message.createdAt}"></span></h3>
-            <span th:text="${message.text}"></span>
-        </div>
+        <div id="messages"></div>
     </div>
     <div class="uk-width-1-5"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/1.2.0/superagent.js"></script>
+    <script>
+        var request = window.superagent;
+        document.addEventListener('DOMContentLoaded', function () {
+            request.get('/api/messages')
+                    .end(function (err, res) {
+                        document.getElementById('messages').innerHTML = res.body.map(rowTemplate).join('');
+                    });
+        }, false);
+
+        function postMessage(form) {
+            request.post('/api/messages')
+                    .set('X-CSRF-TOKEN', form._csrf.value)
+                    .send({text: form.text.value})
+                    .end(function (err, res) {
+                        var current = document.getElementById('messages').innerHTML
+                        document.getElementById('messages').innerHTML = rowTemplate(res.body) + current;
+                        form.text.value = '';
+                    });
+            return false;
+        }
+
+        function rowTemplate(message) {
+            return '<div class="uk-panel uk-panel-box"><h3 class="uk-panel-title">' + message.username + ' @ ' + message.createdAt + '</h3>' + message.text + '</div><br />';
+        }
+    </script>
 </div>
 </body>
 </html>

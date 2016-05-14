@@ -20,5 +20,8 @@ logging:
 spring:
   jackson:
     date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
-
-
+zuul:
+  routes:
+    message:
+      path: /api/messages/**
+      url: http://localhost:7777/api/messages
