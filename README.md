@@ -11,6 +11,6 @@ This demo app consists of following three components:
 
 ## Variants
 
-* [JWT version](tree/jwt)
-* [Use GitHub API instead of Authorization Server](tree/github)
-* [Use Google+ API instead of Authorization Server](tree/google)
+* [JWT version](https://github.com/making/oauth2-sso-demo/tree/jwt)
+* [Use GitHub API instead of Authorization Server](https://github.com/making/oauth2-sso-demo/tree/github)
+* [Use Google+ API instead of Authorization Server](https://github.com/making/oauth2-sso-demo/tree/google)
