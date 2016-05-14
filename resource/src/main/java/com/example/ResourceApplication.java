@@ -52,8 +52,8 @@ public class ResourceApplication extends ResourceServerConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/**").access("#oauth2.hasScope('read')")
-                .antMatchers(HttpMethod.POST, "/api/**").access("#oauth2.hasScope('write')");
+                .antMatchers(HttpMethod.GET, "/api/**").access("hasRole('USER')")
+                .antMatchers(HttpMethod.POST, "/api/**").access("hasRole('USER')");
     }
 
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-auth-server: http://localhost:9999/uaa
+auth-server: https://github.com/login
 server:
   port: 8080
 security:
@@ -6,13 +6,13 @@ security:
     enabled: false
   oauth2:
     client:
-      client-id: demo
-      client-secret: demo
-      access-token-uri: ${auth-server}/oauth/token
+      client-id: bd1c0a783ccdd1c9b9e4
+      client-secret: 1a9030fbca47a5b2c28e92f19050bb77824b5ad1
+      access-token-uri: ${auth-server}/oauth/access_token
       user-authorization-uri: ${auth-server}/oauth/authorize
-      scope: read, write
+      scope: user
     resource:
-      token-info-uri: ${auth-server}/oauth/check_token
+      user-info-uri: https://api.github.com/user
 logging:
   level:
     org.springframework.security: DEBUG
