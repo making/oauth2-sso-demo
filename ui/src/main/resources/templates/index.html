@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>OAuth2 SSO Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.26.3/css/uikit.gradient.min.css"/>
+</head>
+
+<body>
+
+<div class="uk-grid">
+    <div class="uk-width-1-5"></div>
+    <div class="uk-width-3-5">
+        <h1>Demo</h1>
+
+        <form th:action="@{/messages}" class="uk-panel uk-panel-box uk-form" method="post">
+            <input class="uk-form-large" type="text" name="text" placeholder="Message"/>
+            <button class="uk-button uk-button-primary uk-button-large">Send</button>
+        </form>
+        <h2>Messages</h2>
+        <div class="uk-panel uk-panel-box" th:each="message : ${messages}">
+            <h3 class="uk-panel-title"><span th:text="${message.username}"></span> @ <span
+                    th:text="${message.createdAt}"></span></h3>
+            <span th:text="${message.text}"></span>
+        </div>
+    </div>
+    <div class="uk-width-1-5"></div>
+</div>
+</body>
+</html>

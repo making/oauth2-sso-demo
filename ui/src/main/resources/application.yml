@@ -1,0 +1,23 @@
+auth-server: http://localhost:9999/uaa
+server:
+  port: 8080
+security:
+  basic:
+    enabled: false
+  oauth2:
+    client:
+      client-id: demo
+      client-secret: demo
+      access-token-uri: ${auth-server}/oauth/token
+      user-authorization-uri: ${auth-server}/oauth/authorize
+      scope: read, write
+    resource:
+      token-info-uri: ${auth-server}/oauth/check_token
+logging:
+  level:
+    org.springframework.security: DEBUG
+spring:
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+
+
