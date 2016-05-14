@@ -2,16 +2,52 @@ security:
   user:
     password: password
   oauth2:
-    client:
-      client-id: demo
-      client-secret: demo
-      scope: read, write
-      auto-approve-scopes: .*
     authorization:
-      check-token-access: permitAll()
+      token-key-access: permitAll()
 server:
   port: 9999
   context-path: /uaa
 logging:
   level:
     org.springframework.security: DEBUG
+# openssl genrsa -out private.pem 2048
+# openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+jwt:
+  verifier-key: |
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA36clBU2NYn5iZG/swkq3
+    rtUUrXoGSrlvpxfmFpFp6bg9xu/378pi+8UC54DMBka+m/hJIvdl7dpwWFw6tWcg
+    mXJ59zljwgG+VbkKrtQVwsQYsjh++vUKj9oGmtCZX7UE/Rnc7k6w/HMPUalu9gIT
+    x3hXo+sWfWHQYHhKs5sjKJtTixHJ29Rqp5U87iZTPosVaIBzkOcRqM905o5JmAHP
+    9pcR3Gy59eb4r3KJgIqssv7OcVG0PA3Qd7iNIMnhbz0VaQjbibf9b3btEsc2J8Vl
+    wfxX4DC8V3b2J/IqxQP3oJ0eAMvygVR9mkmHGPxy1dA+0OIeM+3nUsFzL3QyZMYD
+    /wIDAQAB
+    -----END PUBLIC KEY-----
+  signing-key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEowIBAAKCAQEA36clBU2NYn5iZG/swkq3rtUUrXoGSrlvpxfmFpFp6bg9xu/3
+    78pi+8UC54DMBka+m/hJIvdl7dpwWFw6tWcgmXJ59zljwgG+VbkKrtQVwsQYsjh+
+    +vUKj9oGmtCZX7UE/Rnc7k6w/HMPUalu9gITx3hXo+sWfWHQYHhKs5sjKJtTixHJ
+    29Rqp5U87iZTPosVaIBzkOcRqM905o5JmAHP9pcR3Gy59eb4r3KJgIqssv7OcVG0
+    PA3Qd7iNIMnhbz0VaQjbibf9b3btEsc2J8VlwfxX4DC8V3b2J/IqxQP3oJ0eAMvy
+    gVR9mkmHGPxy1dA+0OIeM+3nUsFzL3QyZMYD/wIDAQABAoIBABwVG7Pnwfn9DpO3
+    7g2TXi8IuFjz+nhFgnyDprNsvNTI+pDRLtugGP+uBChXZsbe+S4SZfSLBfRwuiyO
+    IB0I/vHliuT9Asaoe2K+IlZDcRwMjWFLcL5IKHRZlvy3dpqq2x6AsdoGbXi1ZdYG
+    JVWkeyFPvglqCl/h+U0zrYWR1D9TzXmB3J5BXEzUuo5VRHarmNi9i8IV8TlNgyXn
+    UlNJoofc9fKZylqwDt8NyqUosKR8xfJXtr/QCihy06bEC1ofE8lqG9+U+Xl4ZvyH
+    YVRV7reWf1R4hePFdbGyEpQLJjwRJrP6HizgFM5PU6uS6S0hyHnwIdUl0ORjdLr7
+    QEx8MWkCgYEA78Mk/7HyKG1+pVThkepmXazP0SA/GuaPUgiUf0crQRk27dgl+vQ8
+    +VbJZ2ZV5P/75puabSTQfFlj2KBijXcKfavQjGcKCcRD12oe3cDSc4x2JpzQCNz/
+    0x5/OlZNNcx43f5qgO+11J5Z+v58l4YSOfNJ7HfONSY1W+bAtt7FlcUCgYEA7sy0
+    kimypNaJd62ukJz4B0UGsvCGgvYuM/7YB4UyVjLpTu4qaCJI+wy7nyIJC9rJlqKt
+    AjqmEz1w2yb5KmbvHn161+cEJ4uoijJ2E6i00Z8KePi4M2ws3TD3HWnGpTt5rxDy
+    CSpj92Yjr/nQ/32RW6N+gUXrLpMSwp8XvVv9EvMCgYEA4ShokXshhxe0jDzXDHmM
+    okHMc36N5IxKYWZPVeuW0i6Ep/2JRU+iByGaR/ERjtlaTSkpb3/YDj7ABkov4tu8
+    zWHRmliVU7CtaRluXR9cQ0jQF9jBgOFRmYiVQEqVfYVEqGzoxabXIhGHPK9Kf91X
+    NnajoF6uFrmH+IMNzW4NLWUCgYAy6fhR9Yv+MzOqDaDbemwzeJceDcRQJdbiBSLg
+    L5j04fP2fTcTbsPqquNR4XrWSTaT5GlIwWJpVb87KosTbFDtSkmnwLyVBeTQWkPs
+    mxq6WtNryXPUmurR2j/FyKiu0Ah4t/8yzxPzSpavTW8vGgGk7S3quBKVoovsbOkt
+    2XAS2wKBgCFItSkGCyRuryHXm+ZK5/pwXcp7oldiZUeAWVhsNtl/n5fLOILfJkj4
+    Jn7kifnwCW+kVLlaXeNDrH3Y0/sxNeUUtMI70N/9940I5lDBei34zzNKLEYT6Dt1
+    gIXT3xZ1yV021bpkfnY/qMJClyQIPi1OhkKRpHvgPO49C6QT+HX6
+    -----END RSA PRIVATE KEY-----
