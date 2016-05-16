@@ -16,24 +16,24 @@ Get an Access Token
 
 ``` console
 $ curl -XPOST -u demo:demo localhost:9999/uaa/oauth/token -d grant_type=password -d username=user -d password=password
-{"access_token":"00bc1b1a-36be-4884-855b-c7854d7b7915","token_type":"bearer","refresh_token":"06c522b3-66fc-4de1-9a0e-cd1765f8a0a2","expires_in":43199,"scope":"read write"}
+{"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NjMzNzQzNDYsInVzZXJfbmFtZSI6InVzZXIiLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIiwiUk9MRV9VU0VSIl0sImp0aSI6IjhlZDA0MDM2LWMwYjItNDJhZC1hZThmLTNiMTg3NGE5YjlmMiIsImNsaWVudF9pZCI6ImRlbW8iLCJzY29wZSI6WyJyZWFkIiwid3JpdGUiXX0.0p9uddJWyKafC0pzubQdCJR4wd9jAZdi07xOZfT8H_mQa629ybz-hT9KqyTu4uf6JdInIovmb6YkRS3OixBfStyULKbBKKdQqhuir_IYHBaxkMyE4CewnXu9c1VpF6qhzL8ucXZ7xiT9eRDhbxwQhCb305f1v4yZMvdPw5ZSLm9Fje6mwCIrq-uzqQlaPP-zvr1_5wkqNc5fy0jjQkfAKTSTKLUBybqG80bmAD9rB6hB--QnIYjtdsT8jBwoH03HHBUL31ABb2lxGXNc248BwCkfmYUBwsFt32eeT2adfhLnfZ2L7noBJVLV3E3AioMbkapFymYZGv7qlG-hYFXozw","token_type":"bearer","refresh_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJ1c2VyIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIl0sImF0aSI6IjhlZDA0MDM2LWMwYjItNDJhZC1hZThmLTNiMTg3NGE5YjlmMiIsImV4cCI6MTQ2NTk2Mjc0NiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJqdGkiOiJmZDFiOWI2ZS0xYzQ3LTRmOGQtYjA3Mi1kYTUxM2IwZmJjMzIiLCJjbGllbnRfaWQiOiJkZW1vIn0.ImHqIMhltBHKga2JgO2S6MXwzptUGXQ2JTrzDKV2V3H2xDEvFXpxfagZDHkV8ru9LqJC3o7OvcCtj8OPeO1mUgu7Qf7T0DzcPWV0Ro5jdTqypUBTmUFGoPNkFrzyCxgZ1vyxx7vwDeFQfKCEa4nwmYD24DzROjbcuakaMtYwGR_s3o1Jy2KL56n7IWsysLxKNjZX7mfG6XLYuCbxvXS-ReltFBPaa0eV631uXm3ydph-IJbIGPHTpCG3niiNAmmiF-5XH0PF0spKuM_pxHXJsMEwZlERyFFfJj2PKox--1FRAtRFKIfQiv0uGZJxR6NB7az0R2qbtQTEhLXW6YudPA","expires_in":3599,"scope":"read write","jti":"8ed04036-c0b2-42ad-ae8f-3b1874a9b9f2"}```
 ```
 
 Post a Resource
 
 ``` console
-$ curl -H 'Authorization: Bearer 00bc1b1a-36be-4884-855b-c7854d7b7915' \
+$ curl -H 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NjMzNzQzNDYsInVzZXJfbmFtZSI6InVzZXIiLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIiwiUk9MRV9VU0VSIl0sImp0aSI6IjhlZDA0MDM2LWMwYjItNDJhZC1hZThmLTNiMTg3NGE5YjlmMiIsImNsaWVudF9pZCI6ImRlbW8iLCJzY29wZSI6WyJyZWFkIiwid3JpdGUiXX0.0p9uddJWyKafC0pzubQdCJR4wd9jAZdi07xOZfT8H_mQa629ybz-hT9KqyTu4uf6JdInIovmb6YkRS3OixBfStyULKbBKKdQqhuir_IYHBaxkMyE4CewnXu9c1VpF6qhzL8ucXZ7xiT9eRDhbxwQhCb305f1v4yZMvdPw5ZSLm9Fje6mwCIrq-uzqQlaPP-zvr1_5wkqNc5fy0jjQkfAKTSTKLUBybqG80bmAD9rB6hB--QnIYjtdsT8jBwoH03HHBUL31ABb2lxGXNc248BwCkfmYUBwsFt32eeT2adfhLnfZ2L7noBJVLV3E3AioMbkapFymYZGv7qlG-hYFXozw' \
        -H 'Content-Type: application/json' \
        -d '{"text" : "Hello World!"}' \
        localhost:7777/api/messages
-{"text":"Hello World!","username":"user","createdAt":"2016-05-16T12:48:39.466"}
+{"text":"Hello World!","username":"user","createdAt":"2016-05-16T12:53:03.263"}
 ```
 
 Get Resources
 
 ``` console
-$ curl -H 'Authorization: Bearer 00bc1b1a-36be-4884-855b-c7854d7b7915' localhost:7777/api/messages
-[{"text":"Hello World!","username":"user","createdAt":"2016-05-16T12:48:39.466"}]
+$ curl -H 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NjMzNzQzNDYsInVzZXJfbmFtZSI6InVzZXIiLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIiwiUk9MRV9VU0VSIl0sImp0aSI6IjhlZDA0MDM2LWMwYjItNDJhZC1hZThmLTNiMTg3NGE5YjlmMiIsImNsaWVudF9pZCI6ImRlbW8iLCJzY29wZSI6WyJyZWFkIiwid3JpdGUiXX0.0p9uddJWyKafC0pzubQdCJR4wd9jAZdi07xOZfT8H_mQa629ybz-hT9KqyTu4uf6JdInIovmb6YkRS3OixBfStyULKbBKKdQqhuir_IYHBaxkMyE4CewnXu9c1VpF6qhzL8ucXZ7xiT9eRDhbxwQhCb305f1v4yZMvdPw5ZSLm9Fje6mwCIrq-uzqQlaPP-zvr1_5wkqNc5fy0jjQkfAKTSTKLUBybqG80bmAD9rB6hB--QnIYjtdsT8jBwoH03HHBUL31ABb2lxGXNc248BwCkfmYUBwsFt32eeT2adfhLnfZ2L7noBJVLV3E3AioMbkapFymYZGv7qlG-hYFXozw' localhost:7777/api/messages
+[{"text":"Hello World!","username":"user","createdAt":"2016-05-16T12:53:03.263"}]
 ```
 
 ## Variants
