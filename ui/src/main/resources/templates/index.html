@@ -12,7 +12,7 @@
     <div class="uk-width-1-5"></div>
     <div class="uk-width-3-5">
         <h1>Demo</h1>
-
+        <p>Logged in as: <span th:text="${#httpServletRequest.remoteUser}">demo</span></p>
         <form th:action="@{/messages}" class="uk-panel uk-panel-box uk-form" method="post">
             <input class="uk-form-large" type="text" name="text" placeholder="Message"/>
             <button class="uk-button uk-button-primary uk-button-large">Send</button>
