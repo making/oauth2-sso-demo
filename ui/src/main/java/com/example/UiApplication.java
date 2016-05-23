@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.RequestEntity;
@@ -72,5 +73,10 @@ public class UiApplication {
     @Bean
     OAuth2RestTemplate oauth2RestTemplate(OAuth2ClientContext oauth2ClientContext, OAuth2ProtectedResourceDetails details) {
         return new OAuth2RestTemplate(details, oauth2ClientContext);
+    }
+
+    @Bean
+    PrincipalExtractor principalExtractor() {
+        return (map) -> map.get("displayName");
     }
 }
