@@ -1,3 +1,5 @@
+⚠️ **Spring Boot 2.0 / Spring Security 5.0 version is [here](https://github.com/making/demo-oauth2-login)**
+
 # OAuth2 SSO Demo with Spring Boot + Spring Security OAuth2
 
 This demo app consists of following three components:
