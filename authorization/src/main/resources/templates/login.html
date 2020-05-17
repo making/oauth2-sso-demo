@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>login Form</title>
+    <link rel="stylesheet" href="https://d2bsvk2etkq8vr.cloudfront.net/pui-css/pui-components-19.2.4.css">
+</head>
+<body style="padding: 30px;">
+<h1>Login Form</h1>
+<br>
+<form class="form" style="width: 800px;" method="post" data-th-action="@{/login}">
+    <fieldset>
+        <div>
+            <div class="grid">
+                <div class="col">
+                    <div class="form-unit inline-form-unit">
+                        <div class="grid grid-inline">
+                            <div class="col col-fixed label-row"><label for="email">Email</label></div>
+                            <div class="col field-row"><input type="email" name="email" id="email" value=""
+                                                              class=""/>
+                            </div>
+                        </div>
+                        <div class="grid">
+                            <div class="col help-row type-gray"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-unit inline-form-unit">
+                        <div class="grid grid-inline">
+                            <div class="col col-fixed label-row"><label for="password">Password</label></div>
+                            <div class="col field-row"><input type="password" name="password" id="password" value=""
+                                                              class=""/></div>
+                        </div>
+                        <div class="grid">
+                            <div class="col help-row type-gray"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <input type="submit" class="pui-btn pui-btn--primary" value="Login">
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</form>
+</body>
+</html>
