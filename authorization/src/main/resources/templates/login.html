@@ -10,6 +10,24 @@
 <body style="padding: 30px;">
 <h1>Login Form</h1>
 <br>
+<div data-th-if="${param.error}">
+    <div class="pui-alert pui-alert-danger" role="alert">
+        <div class="grid">
+            <div class="col col-fixed col-middle pan">
+                <div class="icon icon-middle">
+                    <svg height="48" width="48" viewBox="2 2 44 44" xmlns="http://www.w3.org/2000/svg"
+                         class="icon-report">
+                        <path d="M31.46 6H16.54L6 16.54v14.91L16.54 42h14.91L42 31.46V16.54L31.46 6zM24 34.6c-1.43 0-2.6-1.16-2.6-2.6 0-1.43 1.17-2.6 2.6-2.6 1.43 0 2.6 1.16 2.6 2.6 0 1.44-1.17 2.6-2.6 2.6zm2-8.6h-4V14h4v12z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="col col-middle">
+                <div><span class="em-high">Error: </span>email or password is incorrect.</div>
+            </div>
+        </div>
+    </div>
+    <br>
+</div>
 <form class="form" style="width: 800px;" method="post" data-th-action="@{/login}">
     <fieldset>
         <div>
