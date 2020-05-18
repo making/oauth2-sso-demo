@@ -38,5 +38,11 @@
     </tr>
     </tbody>
 </table>
+<h2>Apps</h2>
+<ul>
+    <li data-th-each="clientDetail : ${clientDetails}">
+        <a data-th-href="${clientDetail.additionalInformation.url}">[[${clientDetail.additionalInformation.displayName}]]</a>
+    </li>
+</ul>
 </body>
 </html>
