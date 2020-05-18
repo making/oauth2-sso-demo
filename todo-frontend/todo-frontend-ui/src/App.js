@@ -4,7 +4,7 @@ import {Table, Tbody, Td, Th, Thead, Tr} from 'pivotal-ui/react/table';
 import {Icon} from 'pivotal-ui/react/iconography';
 import {Form} from 'pivotal-ui/react/forms';
 import {FlexCol, Grid} from 'pivotal-ui/react/flex-grids';
-import {PrimaryButton} from 'pivotal-ui/react/buttons';
+import {DefaultButton, PrimaryButton} from 'pivotal-ui/react/buttons';
 
 import './App.css';
 import 'pivotal-ui/css/typography';
@@ -79,9 +79,9 @@ function App() {
                             <Grid>
                                 <FlexCol>{fields.todoTitle}</FlexCol>
                                 <FlexCol>
-                                    <PrimaryButton type="submit"
+                                    <DefaultButton type="submit"
                                                    disabled={!canSubmit()}>Add
-                                    </PrimaryButton>
+                                    </DefaultButton>
                                 </FlexCol>
                             </Grid>
                         );
@@ -118,6 +118,9 @@ function App() {
                     }
                 </Tbody>
             </Table>
+            <form action={'/logout'} method={'POST'}>
+                <PrimaryButton type="submit">Logout</PrimaryButton>
+            </form>
         </Panel>
     );
 }

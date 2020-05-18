@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @Order(-1)
@@ -15,7 +16,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login").usernameParameter("email").passwordParameter("password").permitAll())
                 .logout(logout -> logout
-                        .logoutUrl("/logout").permitAll())
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout") /* supports GET /logout */)
+                        .permitAll())
                 .requestMatchers(requestMatchers -> requestMatchers
                         .mvcMatchers("/", "/login", "/logout", "/oauth/authorize", "token_keys", "/.well-known/*", "/oauth/token/.well-known/*")
                         .requestMatchers(EndpointRequest.toAnyEndpoint()))
