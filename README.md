@@ -5,9 +5,12 @@ This demo app consists of following three components:
 * [Authorization](authorization) ... OAuth2 Authorization Server which implements some OIDC features that Spring Security requires. Using [legacy Spring Security OAuth2](https://docs.spring.io/spring-security-oauth2-boot/docs/2.3.x-SNAPSHOT/reference/html5/).
 * [Todo API](todo-api) ... OAuth2 Resource Server. Provides REST API. Using [Spring Security 5's OAuth2 Resource Server functionality](https://docs.spring.io/spring-security/site/docs/5.3.2.RELEASE/reference/html5/#oauth2resourceserver).
 * [Todo Frontend](todo-frontend) ... Web UI (React) backed by [Spring Security 5's OAuth2 Login functionality](https://docs.spring.io/spring-security/site/docs/5.3.2.RELEASE/reference/html5/#oauth2login) + [Spring Cloud Gateway's Token Relay](https://cloud.spring.io/spring-cloud-security/reference/html/#_client_token_relay_in_spring_cloud_gateway). 
+
+> ⚠️ Spring Security OAuth [will reach end-of-life in May 2022](https://spring.io/blog/2020/05/07/end-of-life-for-spring-security-oauth).
+
 ## Authorization Code Flow
 
-TBD 
+![image](https://user-images.githubusercontent.com/106908/82171480-69aab180-9902-11ea-88c8-1786b5f6f79d.png)
 
 ## Resource Owner Password Credentials Flow
 
