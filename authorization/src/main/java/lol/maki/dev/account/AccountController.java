@@ -17,7 +17,7 @@ public class AccountController {
     public AccountController(OauthProperties oauthProperties) {
         this.clientDetails = oauthProperties.getClients().values()
                 .stream()
-                .filter(c -> c.getAdditionalInformation().containsKey("displayName"))
+                .filter(c -> c.getAdditionalInformation().containsKey("name"))
                 .collect(Collectors.toList());
     }
 

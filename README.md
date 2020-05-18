@@ -24,3 +24,28 @@ curl -s -X PUT localhost:8082/todos/${TODO_ID} -H "Authorization: Bearer ${ACCES
 curl -s -X DELETE localhost:8082/todos/${TODO_ID} -H "Authorization: Bearer ${ACCESS_TOKEN}"
 curl -s localhost:8082/todos -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```
+
+## Build
+
+```
+./mvnw clean package -f authorization/pom.xml -DskipTests
+./mvnw clean package -f todo-api/pom.xml -DskipTests
+./mvnw clean package -f todo-frontend/pom.xml -DskipTests
+```
+
+## Deploy to Cloud Foundry
+
+```
+## Fix name and OAUTH_CLIENTS_0_ADDITIONALINFORMATION_url for your env
+cf push -f authorization/manifest.yml 
+```
+
+```
+## Fix name and SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI for your env
+cf push -f todo-api/manifest.yml 
+```
+
+```
+## Fix name, SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_DEMO_ISSUER_URI and SPRING_CLOUD_GATEWAY_ROUTES_0_URI for your env
+cf push -f todo-frontend/manifest.yml 
+```

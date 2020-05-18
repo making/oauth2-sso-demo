@@ -1,0 +1,23 @@
+applications:
+- name: authorization
+  instances: 1
+  memory: 256M
+  path: target/authorization-0.0.1-SNAPSHOT.jar
+  env:
+    OAUTH_CLIENTS_0_CLIENTID: todo
+    OAUTH_CLIENTS_0_CLIENTSECRET: '{noop}todo'
+    OAUTH_CLIENTS_0_AUTHORIZEDGRANTTYPES: authorization_code,password,refresh_token
+    OAUTH_CLIENTS_0_SCOPE: openid,todo:read,todo:write
+    OAUTH_CLIENTS_0_REGISTEREDREDIRECTURI: ${OAUTH_CLIENTS_0_ADDITIONALINFORMATION_url}/login/oauth2/code/demo
+    OAUTH_CLIENTS_0_AUTOAPPROVESCOPES: ${OAUTH_CLIENTS_0_SCOPE}
+    OAUTH_CLIENTS_0_ACCESSTOKENVALIDITYSECONDS: 86400
+    OAUTH_CLIENTS_0_REFRESHTOKENVALIDITYSECONDS: 604800
+    OAUTH_CLIENTS_0_ADDITIONALINFORMATION_NAME: Todo List
+    OAUTH_CLIENTS_0_ADDITIONALINFORMATION_URL: https://todo.apps.pcfone.io
+    SERVER_TOMCAT_MAX_THREADS: 4
+    JAVA_OPTS: -XX:ReservedCodeCacheSize=32M -Xss512k -Duser.timezone=Asia/Tokyo
+    JBP_CONFIG_OPEN_JDK_JRE: '{memory_calculator: {stack_threads: 20}, jre: {version: 11.+}}'
+    MANAGEMENT_METRICS_TAGS_ORGANIZATION: ${vcap.application.organization_name}
+    MANAGEMENT_METRICS_TAGS_SPACE: ${vcap.application.space_name}
+    MANAGEMENT_METRICS_TAGS_APPLICATION: ${vcap.application.application_name}
+    MANAGEMENT_METRICS_TAGS_INSTANCE_ID: ${management.metrics.tags.application}:${vcap.application.instance_index}

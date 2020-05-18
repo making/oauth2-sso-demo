@@ -1,0 +1,17 @@
+applications:
+- name: todo
+  instances: 1
+  memory: 256M
+  path: todo-frontend-server/target/todo-frontend-server-0.0.1-SNAPSHOT.jar
+  env:
+    SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_DEMO_ISSUER_URI: https://authorization.apps.pcfone.io/oauth/token
+    SPRING_CLOUD_GATEWAY_ROUTES_0_ID: todo-api
+    SPRING_CLOUD_GATEWAY_ROUTES_0_URI: https://todo-api.apps.pcfone.io
+    SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/todos/**
+    SPRING_CLOUD_GATEWAY_ROUTES_0_FILTERS_0: TokenRelay=
+    JAVA_OPTS: -XX:ReservedCodeCacheSize=32M -Xss512k -Duser.timezone=Asia/Tokyo
+    JBP_CONFIG_OPEN_JDK_JRE: '{memory_calculator: {stack_threads: 20}, jre: {version: 11.+}}'
+    MANAGEMENT_METRICS_TAGS_ORGANIZATION: ${vcap.application.organization_name}
+    MANAGEMENT_METRICS_TAGS_SPACE: ${vcap.application.space_name}
+    MANAGEMENT_METRICS_TAGS_APPLICATION: ${vcap.application.application_name}
+    MANAGEMENT_METRICS_TAGS_INSTANCE_ID: ${management.metrics.tags.application}:${vcap.application.instance_index}
