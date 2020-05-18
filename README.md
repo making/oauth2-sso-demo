@@ -49,3 +49,8 @@ cf push -f todo-api/manifest.yml
 ## Fix name, SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_DEMO_ISSUER_URI and SPRING_CLOUD_GATEWAY_ROUTES_0_URI for your env
 cf push -f todo-frontend/manifest.yml 
 ```
+
+## Demo Site
+
+* url: https://todo.apps.pcfone.io
+* user: `demo@example.com / password` or `john@example.com / password`
