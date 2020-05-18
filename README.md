@@ -10,7 +10,7 @@ This demo app consists of following three components:
 
 ## Authorization Code Flow
 
-![image](https://user-images.githubusercontent.com/106908/82171480-69aab180-9902-11ea-88c8-1786b5f6f79d.png)
+![image](https://user-images.githubusercontent.com/106908/82171880-78de2f00-9903-11ea-9302-a30b85bed3db.png)
 
 ## Resource Owner Password Credentials Flow
 
