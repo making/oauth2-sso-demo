@@ -9,6 +9,9 @@ applications:
     SPRING_CLOUD_GATEWAY_ROUTES_0_URI: https://todo-api.apps.pcfone.io
     SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/todos/**
     SPRING_CLOUD_GATEWAY_ROUTES_0_FILTERS_0: TokenRelay=
+    SPRING_RESOURCES_CACHE_CACHECONTROL_MAXAGE: 3d
+    SERVER_COMPRESSION_ENABLED: true
+    SERVER_COMPRESSION_MINRESPONSESIZE: 1KB
     JAVA_OPTS: -XX:ReservedCodeCacheSize=32M -Xss512k -Duser.timezone=Asia/Tokyo
     JBP_CONFIG_OPEN_JDK_JRE: '{memory_calculator: {stack_threads: 20}, jre: {version: 11.+}}'
     MANAGEMENT_METRICS_TAGS_ORGANIZATION: ${vcap.application.organization_name}
