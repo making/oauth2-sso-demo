@@ -36,7 +36,7 @@ curl -s localhost:8082/todos -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ## Deploy to Cloud Foundry
 
 ```
-## Fix name and OAUTH_CLIENTS_0_ADDITIONALINFORMATION_url for your env
+## Fix name and OAUTH_CLIENTS_0_ADDITIONALINFORMATION_URL for your env
 cf push -f authorization/manifest.yml 
 ```
 
