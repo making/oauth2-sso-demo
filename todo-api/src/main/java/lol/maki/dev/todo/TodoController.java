@@ -40,6 +40,8 @@ public class TodoController {
         todo.setTodoId(UUID.randomUUID().toString());
         todo.setCreatedAt(Instant.now());
         todo.setCreatedBy(jwt.getSubject());
+        todo.setUpdatedAt(todo.getCreatedAt());
+        todo.setUpdatedBy(todo.getCreatedBy());
         final Todo created = this.todoRepository.create(todo);
         final URI uri = builder.pathSegment("todos", created.getTodoId()).build().toUri();
         return ResponseEntity.created(uri).body(created);

@@ -91,7 +91,8 @@ function App() {
             <Table className="pui-table--tr-hover">
                 <Thead>
                     <Tr>
-                        <Th>Title</Th><Th>Created At</Th><Th>Created By</Th><Th>Actions</Th>
+                        <Th>Title</Th><Th>Created At</Th><Th>Created By</Th><Th>Updated At</Th><Th>Updated
+                        By</Th><Th>Actions</Th>
                     </Tr>
                 </Thead>
                 <Tbody>
@@ -103,6 +104,8 @@ function App() {
                                 </React.Fragment> : ``}{todo.todoTitle}</Td>
                                 <Td>{todo.createdAt}</Td>
                                 <Td>{todo.createdBy}</Td>
+                                <Td>{todo.updatedAt}</Td>
+                                <Td>{todo.updatedBy}</Td>
                                 <Td>
                                     {!todo.finished &&
                                     <React.Fragment>
