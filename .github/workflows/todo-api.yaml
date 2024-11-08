@@ -1,0 +1,57 @@
+name: Todo API
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - todo-api/src/**
+    - todo-api/pom.xml
+    - .github/workflows/*
+  pull_request:
+    branches:
+    - main
+    paths:
+    - todo-api/src/**
+    - todo-api/pom.xml
+    - .github/workflows/*
+jobs:
+  unit-test:
+    uses: making/oauth2-sso-demo/.github/workflows/unit-test.yaml@main
+    with:
+      pom_dir: todo-api
+  build-oci-image-jvm-amd64:
+    needs: unit-test
+    uses: making/oauth2-sso-demo/.github/workflows/build-oci-image-jvm.yaml@main
+    with:
+      pom_dir: todo-api
+      image_name: todo-api_jvm_amd64
+      image_file: todo-api_jvm_amd64.yaml
+      runs_on: ubuntu-latest
+  build-oci-image-jvm-aarch64:
+    needs: unit-test
+    uses: making/oauth2-sso-demo/.github/workflows/build-oci-image-jvm.yaml@main
+    with:
+      pom_dir: todo-api
+      image_name: todo-api_jvm_aarch64
+      image_file: todo-api_jvm_aarch64.yaml
+      runs_on: raspberrypi
+  push-multi-arch-image-jvm:
+    needs:
+    - build-oci-image-jvm-amd64
+    - build-oci-image-jvm-aarch64
+    uses: making/oauth2-sso-demo/.github/workflows/push-multi-arch-image.yaml@main
+    with:
+      prefix: jvm
+      pom_dir: todo-api
+  save-image-jvm-amd64:
+    needs: build-oci-image-jvm-amd64
+    uses: making/workflows/.github/workflows/save-images.yaml@main
+    with:
+      image_name: todo-api_jvm_amd64
+      image_file: todo-api_jvm_amd64.yaml
+  save-image-jvm-aarch64:
+    needs: build-oci-image-jvm-aarch64
+    uses: making/workflows/.github/workflows/save-images.yaml@main
+    with:
+      image_name: todo-api_jvm_aarch64
+      image_file: todo-api_jvm_aarch64.yaml
