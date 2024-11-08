@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* Container */
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Input Field */
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        /* Styled Button */
+        .styled-button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .styled-button:hover {
+            background-color: #218838;
+        }
+
+        /* Message */
+        .error-message {
+            text-align: center;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">Login</div>
+    {{#springMacroRequestContext.request.parameterMap.error}}
+        <div class="error-message">{{SPRING_SECURITY_LAST_EXCEPTION}}</div>
+    {{/springMacroRequestContext.request.parameterMap.error}}
+    <form action="/login" method="post">
+        <label>
+            <input type="text" name="username" placeholder="Username" class="input-field" required>
+        </label>
+        <label>
+            <input type="password" name="password" placeholder="Password" class="input-field" required>
+        </label>
+        {{#_csrf}}
+            <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+        {{/_csrf}}
+        <button type="submit" class="styled-button">Login</button>
+    </form>
+</div>
+
+</body>
+</html>

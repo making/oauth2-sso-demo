@@ -1,0 +1,9 @@
+services:
+  zipkin:
+    image: 'ghcr.io/openzipkin-contrib/zipkin-otel:0.1'
+    ports:
+    - '9411:9411'
+    environment:
+      UI_ENABLED: 'true'
+    labels:
+      org.springframework.boot.service-connection: 'zipkin'
