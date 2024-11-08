@@ -123,6 +123,7 @@
 							<BP_OCI_SOURCE>https://github.com/${env.GITHUB_REPOSITORY}</BP_OCI_SOURCE>
 							<BP_OCI_REVISION>${env.GITHUB_SHA}</BP_OCI_REVISION>
 							<BP_JVM_CDS_ENABLED>true</BP_JVM_CDS_ENABLED>
+							<CDS_TRAINING_JAVA_TOOL_OPTIONS>-Dspring.security.oauth2.client.provider.todo-frontend.issuer-uri=https://accounts.google.com</CDS_TRAINING_JAVA_TOOL_OPTIONS>
 						</env>
 					</image>
 				</configuration>
