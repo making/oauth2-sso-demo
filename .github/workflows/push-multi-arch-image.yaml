@@ -1,0 +1,41 @@
+name: Push Multi Arch Image
+on:
+  workflow_call:
+    inputs:
+      prefix:
+        required: true
+        type: string
+      pom_dir:
+        required: false
+        type: string
+        default: '.'
+      target_ref:
+        required: false
+        type: string
+        default: 'refs/heads/main'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login to GitHub Container Registry
+      if: github.ref == inputs.target_ref
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: docker manifest push
+      if: github.ref == inputs.target_ref
+      run: |
+        docker manifest create ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:${{ inputs.prefix }}_${GITHUB_SHA} \
+          --amend ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:${{ inputs.prefix }}_amd64_${GITHUB_SHA} \
+          --amend ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:${{ inputs.prefix }}_aarch64_${GITHUB_SHA}
+        docker manifest create ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:${{ inputs.prefix }} \
+          --amend ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:${{ inputs.prefix }}_amd64_${GITHUB_SHA} \
+          --amend ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:${{ inputs.prefix }}_aarch64_${GITHUB_SHA}
+        docker manifest push ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:${{ inputs.prefix }}_${GITHUB_SHA}
+        docker manifest push ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:${{ inputs.prefix }}

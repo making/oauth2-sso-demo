@@ -35,6 +35,14 @@ jobs:
       image_name: authorization_jvm_aarch64
       image_file: authorization_jvm_aarch64.yaml
       runs_on: raspberrypi
+  push-multi-arch-image-jvm:
+    needs:
+    - build-oci-image-jvm-amd64
+    - build-oci-image-jvm-aarch64
+    uses: making/oauth2-sso-demo/.github/workflows/push-multi-arch-image.yaml@main
+    with:
+      prefix: jvm
+      pom_dir: authorization
   save-image-jvm-amd64:
     needs: build-oci-image-jvm-amd64
     uses: making/workflows/.github/workflows/save-images.yaml@main
