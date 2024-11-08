@@ -2,9 +2,10 @@ name: Unit Test
 on:
   workflow_call:
     inputs:
-      module:
-        required: true
+      pom_dir:
+        required: false
         type: string
+        default: '.'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,4 +20,4 @@ jobs:
         distribution: graalvm
         cache: 'maven'
     - name: unit test
-      run: ./mvnw -V -f ${{ inputs.module }} clean test --no-transfer-progress
+      run: ./mvnw -V -f ${{ inputs.pom_dir }} clean test --no-transfer-progress

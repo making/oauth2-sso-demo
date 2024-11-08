@@ -18,12 +18,12 @@ jobs:
   unit-test:
     uses: making/oauth2-sso-demo/.github/workflows/unit-test.yaml@main
     with:
-      module: authorization
+      pom_dir: authorization
   build-oci-image-jvm-amd64:
     needs: unit-test
     uses: making/oauth2-sso-demo/.github/workflows/build-oci-image-jvm.yaml@main
     with:
-      module: authorization
+      pom_dir: authorization
       image_name: authorization_jvm_amd64
       image_file: authorization_jvm_amd64.yaml
       runs_on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
     needs: unit-test
     uses: making/oauth2-sso-demo/.github/workflows/build-oci-image-jvm.yaml@main
     with:
-      module: authorization
+      pom_dir: authorization
       image_name: authorization_jvm_aarch64
       image_file: authorization_jvm_aarch64.yaml
       runs_on: raspberrypi

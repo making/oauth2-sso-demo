@@ -2,9 +2,10 @@ name: Build OCI Image (JVM)
 on:
   workflow_call:
     inputs:
-      module:
-        required: true
+      pom_dir:
+        required: false
         type: string
+        default: '.'
       image_name:
         required: false
         type: string
@@ -36,13 +37,13 @@ jobs:
         cache: 'maven'
     - name: Set version
       run: |
-        CURRENT_VERSION=$(./mvnw -f ${{ inputs.module }} help:evaluate -Dexpression=project.version -q -DforceStdout)
+        CURRENT_VERSION=$(./mvnw -f ${{ inputs.pom_dir }} help:evaluate -Dexpression=project.version -q -DforceStdout)
         NEW_VERSION=$(echo $CURRENT_VERSION | sed "s/-SNAPSHOT/.${GITHUB_SHA}/")
-        ./mvnw -f ${{ inputs.module }} versions:set -DnewVersion=${NEW_VERSION} -DgenerateBackupPoms=false --no-transfer-progress
+        ./mvnw -f ${{ inputs.pom_dir }} versions:set -DnewVersion=${NEW_VERSION} -DgenerateBackupPoms=false --no-transfer-progress
     - name: build image (Paketo Buildpack)
       run: |
-        OS_ARCH=$(./mvnw -f ${{ inputs.module }} help:evaluate -Dexpression=os.arch -q -DforceStdout)
-        ./mvnw -V -f ${{ inputs.module }} --no-transfer-progress spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=ghcr.io/${{ github.repository }}/${{ inputs.module }}:jvm_${OS_ARCH}_${GITHUB_SHA}
+        OS_ARCH=$(./mvnw -f ${{ inputs.pom_dir }} help:evaluate -Dexpression=os.arch -q -DforceStdout)
+        ./mvnw -V -f ${{ inputs.pom_dir }} --no-transfer-progress spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:jvm_${OS_ARCH}_${GITHUB_SHA}
     - name: Login to GitHub Container Registry
       if: github.ref == inputs.target_ref
       uses: docker/login-action@v3
@@ -53,16 +54,16 @@ jobs:
     - name: docker push
       if: github.ref == inputs.target_ref
       run: |
-        OS_ARCH=$(./mvnw -f ${{ inputs.module }} help:evaluate -Dexpression=os.arch -q -DforceStdout)
-        docker push ghcr.io/${{ github.repository }}/${{ inputs.module }}:jvm_${OS_ARCH}_${GITHUB_SHA}
-        docker tag ghcr.io/${{ github.repository }}/${{ inputs.module }}:jvm_${OS_ARCH}_${GITHUB_SHA} ghcr.io/${{ github.repository }}/${{ inputs.module }}:jvm_${OS_ARCH}
-        docker push ghcr.io/${{ github.repository }}/${{ inputs.module }}:jvm_${OS_ARCH}
+        OS_ARCH=$(./mvnw -f ${{ inputs.pom_dir }} help:evaluate -Dexpression=os.arch -q -DforceStdout)
+        docker push ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:jvm_${OS_ARCH}_${GITHUB_SHA}
+        docker tag ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:jvm_${OS_ARCH}_${GITHUB_SHA} ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:jvm_${OS_ARCH}
+        docker push ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:jvm_${OS_ARCH}
     - name: Generate digest
       if: github.ref == inputs.target_ref
       run: |
-        OS_ARCH=$(./mvnw -f ${{ inputs.module }} help:evaluate -Dexpression=os.arch -q -DforceStdout)
+        OS_ARCH=$(./mvnw -f ${{ inputs.pom_dir }} help:evaluate -Dexpression=os.arch -q -DforceStdout)
         cat <<EOF > ${{ inputs.image_file }}
-        image: $(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/${{ github.repository }}/${{ inputs.module }}:jvm_${OS_ARCH}_${GITHUB_SHA})
+        image: $(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:jvm_${OS_ARCH}_${GITHUB_SHA})
         git_revision: ${GITHUB_SHA}
         EOF
     - name: Upload artifact
