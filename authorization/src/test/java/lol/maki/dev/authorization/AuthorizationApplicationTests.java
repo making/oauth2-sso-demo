@@ -76,8 +76,8 @@ class AuthorizationApplicationTests {
 		ResponseEntity<Void> redirectToCode = this.restClient.get()
 			.uri("/oauth2/authorize",
 					uri -> uri.queryParam("response_type", "code")
-						.queryParam("client_id", "todo-ui")
-						.queryParam("redirect_uri", "http://localhost:8080/login/oauth2/code/todo-ui")
+						.queryParam("client_id", "todo-frontend")
+						.queryParam("redirect_uri", "http://localhost:8080/login/oauth2/code/todo-frontend")
 						.queryParam("scope", "todo:read todo:write openid")
 						.build())
 			.cookie("JSESSIONID", jsessionId(login))
@@ -91,9 +91,9 @@ class AuthorizationApplicationTests {
 		ResponseEntity<JsonNode> token = restClient.post()
 			.uri("/oauth2/token")
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-			.headers(httpHeaders -> httpHeaders.setBasicAuth("todo-ui", "secret"))
+			.headers(httpHeaders -> httpHeaders.setBasicAuth("todo-frontend", "secret"))
 			.body("grant_type=authorization_code&code=%s&redirect_uri=%s".formatted(code,
-					"http://localhost:8080/login/oauth2/code/todo-ui"))
+					"http://localhost:8080/login/oauth2/code/todo-frontend"))
 			.retrieve()
 			.toEntity(JsonNode.class);
 		assertThat(token.getStatusCode()).isEqualTo(HttpStatus.OK);

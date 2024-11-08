@@ -22,8 +22,8 @@ class TestcontainersConfiguration {
 					"/authorization.jar")
 			.withCommand("java", "-jar", "/authorization.jar", "--spring.security.user.name=test@example.com",
 					"--spring.security.user.password=test",
-					"--spring.security.oauth2.authorizationserver.client.todo-ui.registration.client-id=todo-ui",
-					"--spring.security.oauth2.authorizationserver.client.todo-ui.registration.client-secret={noop}secret",
+					"--spring.security.oauth2.authorizationserver.client.todo-frontend.registration.client-id=todo-frontend",
+					"--spring.security.oauth2.authorizationserver.client.todo-frontend.registration.client-secret={noop}secret",
 					"--management.zipkin.tracing.export.enabled=false", "--spring.main.banner-mode=off")
 			.withExposedPorts(9000)
 			.waitingFor(Wait.forHttp("/actuator/health").forPort(9000).withStartupTimeout(Duration.ofSeconds(10)))

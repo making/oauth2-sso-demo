@@ -4,19 +4,19 @@ This demo app consists of following three components:
 
 * [Authorization](authorization) ... OAuth2/OIDC Authorization Server. Using [Spring Authorization Server](https://docs.spring.io/spring-authorization-server/reference/index.html).
 * [Todo API](todo-api) ... OAuth2 Resource Server. Provides REST API. Using [Spring Security's OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/6.4/servlet/oauth2/resource-server/index.html).
-* [Todo UI](todo-ui) ... Web UI (React) backed by [Spring Security's OAuth2 Login](https://docs.spring.io/spring-security/reference/6.4/servlet/oauth2/login/index.html) + [OAuth 2.0 Client](https://docs.spring.io/spring-security/reference/6.4/servlet/oauth2/client/index.html).
+* [Todo Frontend](todo-frontend) ... Web UI (React) backed by [Spring Security's OAuth2 Login](https://docs.spring.io/spring-security/reference/6.4/servlet/oauth2/login/index.html) + [OAuth 2.0 Client](https://docs.spring.io/spring-security/reference/6.4/servlet/oauth2/client/index.html).
 
 ## How to run
 
 Java 21+ and docker are required.
 
 ```
-./mvnw clean spring-boot:run -f authorization -Dspring-boot.run.arguments="--spring.docker.compose.enabled=true --spring.docker.compose.file=$(pwd)/compose.yaml"
-./mvnw clean spring-boot:run -f todo-api -Dspring-boot.run.arguments="--spring.docker.compose.enabled=true --spring.docker.compose.file=$(pwd)/compose.yaml"
-./mvnw clean spring-boot:run -f todo-ui -Dspring-boot.run.arguments="--spring.docker.compose.enabled=true --spring.docker.compose.file=$(pwd)/compose.yaml"
+./mvnw spring-boot:run -f authorization -Dspring-boot.run.arguments="--spring.docker.compose.enabled=true --spring.docker.compose.file=$(pwd)/compose.yaml"
+./mvnw spring-boot:run -f todo-api -Dspring-boot.run.arguments="--spring.docker.compose.enabled=true --spring.docker.compose.file=$(pwd)/compose.yaml"
+./mvnw spring-boot:run -f todo-frontend -Dspring-boot.run.arguments="--spring.docker.compose.enabled=true --spring.docker.compose.file=$(pwd)/compose.yaml"
 ```
 
-Visit http://localhost:8080 (todo-ui). The first time you visit, you will be redirected to http://127.0.0.1:9000 (authorization).
+Visit http://localhost:8080 (todo-frontend). The first time you visit, you will be redirected to http://127.0.0.1:9000 (authorization).
 
 <img width="1024" alt="image" src="https://github.com/user-attachments/assets/5f2764a8-4fde-41be-b0e6-d21f04d7fdeb">
 

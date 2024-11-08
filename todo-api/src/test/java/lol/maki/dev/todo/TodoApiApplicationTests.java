@@ -52,8 +52,8 @@ class TodoApiApplicationTests {
 				/* no-op */})
 			.build();
 		this.accessTokenSupplier = scopes -> OAuth2.authorizationCodeFlow(URI.create(issuerUrl), rest,
-				new OAuth2.User("test@example.com", "test"), new OAuth2.Client("todo-ui", "secret"),
-				URI.create("http://localhost:8080/login/oauth2/code/todo-ui"), scopes);
+				new OAuth2.User("test@example.com", "test"), new OAuth2.Client("todo-frontend", "secret"),
+				URI.create("http://localhost:8080/login/oauth2/code/todo-frontend"), scopes);
 		this.restClient = builder.baseUrl("http://localhost:" + port).build();
 	}
 
