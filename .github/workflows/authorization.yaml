@@ -27,9 +27,23 @@ jobs:
       image_name: authorization_jvm_amd64
       image_file: authorization_jvm_amd64.yaml
       runs_on: ubuntu-latest
+  build-oci-image-jvm-aarch64:
+    needs: unit-test
+    uses: making/oauth2-sso-demo/.github/workflows/build-oci-image-jvm.yaml@main
+    with:
+      module: authorization
+      image_name: authorization_jvm_aarch64
+      image_file: authorization_jvm_aarch64.yaml
+      runs_on: raspberrypi
   save-image-jvm-amd64:
     needs: build-oci-image-jvm-amd64
     uses: making/workflows/.github/workflows/save-images.yaml@main
     with:
       image_name: authorization_jvm_amd64
       image_file: authorization_jvm_amd64.yaml
+  save-image-jvm-aarch64:
+    needs: build-oci-image-jvm-aarch64
+    uses: making/workflows/.github/workflows/save-images.yaml@main
+    with:
+      image_name: authorization_jvm_aarch64
+      image_file: authorization_jvm_aarch64.yaml
