@@ -1,0 +1,35 @@
+name: Authorization
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - authorization/src/**
+    - authorization/pom.xml
+    - .github/workflows/*
+  pull_request:
+    branches:
+    - main
+    paths:
+    - authorization/src/**
+    - authorization/pom.xml
+    - .github/workflows/*
+jobs:
+  unit-test:
+    uses: making/oauth2-sso-demo/.github/workflows/unit-test.yaml@main
+    with:
+      module: authorization
+  build-oci-image-jvm-amd64:
+    needs: unit-test
+    uses: making/oauth2-sso-demo/.github/workflows/build-oci-image-jvm.yaml@main
+    with:
+      module: authorization
+      image_name: authorization_jvm_amd64
+      image_file: authorization_jvm_amd64.yaml
+      runs_on: ubuntu-latest
+  save-image-jvm-amd64:
+    needs: build-oci-image-jvm-amd64
+    uses: making/workflows/.github/workflows/save-images.yaml@main
+    with:
+      image_name: authorization_jvm_amd64
+      image_file: authorization_jvm_amd64.yaml
