@@ -5,26 +5,22 @@ interface ContainerProps {
     children: ReactNode;
 }
 
-function Container({children}: ContainerProps) {
-    return (
-        <div style={{maxWidth: '800px', margin: '0 auto', fontFamily: 'Arial, sans-serif'}}>
-            {children}
-        </div>
-    );
-}
+const Container = ({children}: ContainerProps) => (
+    <div style={{maxWidth: '800px', margin: '0 auto', fontFamily: 'Arial, sans-serif'}}>
+        {children}
+    </div>
+);
 
 // Header component for title
 interface HeaderProps {
     children: ReactNode;
 }
 
-function Header({children}: HeaderProps) {
-    return (
-        <h1 style={{textAlign: 'center', color: '#333', marginBottom: '20px'}}>
-            {children}
-        </h1>
-    );
-}
+const Header = ({children}: HeaderProps) => (
+    <h1 style={{textAlign: 'center', color: '#333', marginBottom: '20px'}}>
+        {children}
+    </h1>
+);
 
 // Styled button with hover effect
 interface StyledButtonProps {
@@ -34,29 +30,27 @@ interface StyledButtonProps {
     style?: CSSProperties;
 }
 
-function StyledButton({children, onClick, type = 'button', style}: StyledButtonProps) {
-    return (
-        <button
-            type={type}
-            onClick={onClick}
-            style={{
-                padding: '10px 20px',
-                fontSize: '16px',
-                backgroundColor: '#28a745',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                transition: 'background-color 0.3s',
-                ...style,
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#218838')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#28a745')}
-        >
-            {children}
-        </button>
-    );
-}
+const StyledButton = ({children, onClick, type = 'button', style}: StyledButtonProps) => (
+    <button
+        type={type}
+        onClick={onClick}
+        style={{
+            padding: '10px 20px',
+            fontSize: '16px',
+            backgroundColor: '#28a745',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s',
+            ...style,
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#218838')}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#28a745')}
+    >
+        {children}
+    </button>
+);
 
 // Small icon button for action controls (toggle and delete)
 interface IconButtonProps {
@@ -66,24 +60,22 @@ interface IconButtonProps {
     title: string;
 }
 
-function IconButton({icon, color, onClick, title}: IconButtonProps) {
-    return (
-        <button
-            onClick={onClick}
-            title={title}
-            style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '16px',
-                color,
-                margin: '0 5px',
-            }}
-        >
-            {icon}
-        </button>
-    );
-}
+const IconButton = ({icon, color, onClick, title}: IconButtonProps) => (
+    <button
+        onClick={onClick}
+        title={title}
+        style={{
+            backgroundColor: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '16px',
+            color,
+            margin: '0 5px',
+        }}
+    >
+        {icon}
+    </button>
+);
 
 // Input field for entering todo title
 interface StyledInputProps {
@@ -92,44 +84,40 @@ interface StyledInputProps {
     placeholder?: string;
 }
 
-function StyledInput({value, onChange, placeholder}: StyledInputProps) {
-    return (
-        <input
-            type="text"
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            required={true}
-            style={{
-                padding: '10px',
-                width: '70%',
-                fontSize: '16px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                marginRight: '10px',
-            }}
-        />
-    );
-}
+const StyledInput = ({value, onChange, placeholder}: StyledInputProps) => (
+    <input
+        type="text"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={true}
+        style={{
+            padding: '10px',
+            width: '70%',
+            fontSize: '16px',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            marginRight: '10px',
+        }}
+    />
+);
 
 // Table container with header and body styling
 interface StyledTableProps {
     children: ReactNode;
 }
 
-function StyledTable({children}: StyledTableProps) {
-    return (
-        <table
-            style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-            }}
-        >
-            {children}
-        </table>
-    );
-}
+const StyledTable = ({children}: StyledTableProps) => (
+    <table
+        style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        }}
+    >
+        {children}
+    </table>
+);
 
 // Table cell component with optional width
 interface TableCellProps {
@@ -139,7 +127,7 @@ interface TableCellProps {
     width?: string;
 }
 
-function TableCell({children, header = false, center = false, width}: TableCellProps) {
+const TableCell = ({children, header = false, center = false, width}: TableCellProps) => {
     const baseStyle: CSSProperties = {
         padding: '10px',
         textAlign: center ? 'center' : 'left',
@@ -156,20 +144,18 @@ function TableCell({children, header = false, center = false, width}: TableCellP
     ) : (
         <td style={baseStyle}>{children}</td>
     );
-}
+};
 
 // WelcomeMessage component to display the username
 interface WelcomeMessageProps {
     username: string;
 }
 
-function WelcomeMessage({username}: WelcomeMessageProps) {
-    return (
-        <p style={{textAlign: 'center', fontSize: '18px', color: '#555'}}>
-            Welcome, {username}!
-        </p>
-    );
-}
+const WelcomeMessage = ({username}: WelcomeMessageProps) => (
+    <p style={{textAlign: 'center', fontSize: '18px', color: '#555'}}>
+        Welcome, {username}!
+    </p>
+);
 
 export {
     Container,

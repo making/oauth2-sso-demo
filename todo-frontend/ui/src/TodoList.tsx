@@ -20,7 +20,7 @@ interface Todo {
     finished: boolean;
 }
 
-function TodoList() {
+const TodoList = () => {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [username, setUsername] = useState<string>('');
     const [csrfToken, setCsrfToken] = useState<string>('');
@@ -218,6 +218,6 @@ function TodoList() {
             </StyledTable>
         </Container>
     );
-}
+};
 
 export default TodoList;
