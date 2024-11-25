@@ -17,16 +17,17 @@ class TestcontainersConfiguration {
 
 	@Bean
 	GenericContainer<?> authorizationServer() {
-		return new GenericContainer<>("bellsoft/liberica-openjre-alpine:21")
-			.withCopyFileToContainer(MountableFile.forClasspathResource("authorization-0.0.1-SNAPSHOT.jar"),
-					"/authorization.jar")
-			.withCommand("java", "-jar", "/authorization.jar", "--spring.security.user.name=test@example.com",
-					"--spring.security.user.password=test",
-					"--spring.security.oauth2.authorizationserver.client.todo-frontend.registration.client-id=todo-frontend",
-					"--spring.security.oauth2.authorizationserver.client.todo-frontend.registration.client-secret={noop}secret",
-					"--spring.security.oauth2.authorizationserver.client.todo-frontend.registration.redirect-uris=http://localhost:52241/login/oauth2/code/todo-frontend",
-					"--management.zipkin.tracing.export.enabled=false", "--spring.main.banner-mode=off",
-					"--logging.level.org.springframework.security=info")
+		return new GenericContainer<>("ghcr.io/making/oauth2-sso-demo/authorization:jvm")
+			.withEnv("spring.security.user.name", "test@example.com")
+			.withEnv("spring.security.user.password", "test")
+			.withEnv("spring.security.oauth2.authorizationserver.client.todo-frontend.registration.client-id",
+					"todo-frontend")
+			.withEnv("spring.security.oauth2.authorizationserver.client.todo-frontend.registration.client-secret",
+					"{noop}secret")
+			.withEnv("spring.security.oauth2.authorizationserver.client.todo-frontend.registration.redirect-uris",
+					"http://localhost:52241/login/oauth2/code/todo-frontend")
+			.withEnv("management.zipkin.tracing.export.enabled", "false")
+			.withEnv("spring.main.banner-mode", "off")
 			.withExposedPorts(9000)
 			.waitingFor(Wait.forHttp("/actuator/health").forPort(9000).withStartupTimeout(Duration.ofSeconds(10)))
 			.withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("authorization-server")));
