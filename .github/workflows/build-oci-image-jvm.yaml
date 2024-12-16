@@ -18,13 +18,13 @@ on:
         required: false
         type: string
         default: 'refs/heads/main'
-      runs_on:
+      image_platform:
         required: false
         type: string
-        default: ubuntu-latest
+        default: linux/amd64
 jobs:
   build:
-    runs-on: ${{ inputs.runs_on }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -43,7 +43,7 @@ jobs:
     - name: build image (Paketo Buildpack)
       run: |
         OS_ARCH=$(./mvnw -f ${{ inputs.pom_dir }} help:evaluate -Dexpression=os.arch -q -DforceStdout)
-        ./mvnw -V -f ${{ inputs.pom_dir }} --no-transfer-progress spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:jvm_${OS_ARCH}_${GITHUB_SHA}
+        ./mvnw -V -f ${{ inputs.pom_dir }} --no-transfer-progress spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=ghcr.io/${{ github.repository }}/${{ inputs.pom_dir }}:jvm_${OS_ARCH}_${GITHUB_SHA} -Dspring-boot.build-image.imagePlatform=${{ inputs.image_platform }}
     - name: Login to GitHub Container Registry
       if: github.ref == inputs.target_ref
       uses: docker/login-action@v3

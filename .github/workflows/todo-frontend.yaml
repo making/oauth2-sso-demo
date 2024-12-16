@@ -28,7 +28,7 @@ jobs:
       pom_dir: todo-frontend
       image_name: todo-frontend_jvm_amd64
       image_file: todo-frontend_jvm_amd64.yaml
-      runs_on: ubuntu-latest
+      image_platform: linux/amd64
   build-oci-image-jvm-aarch64:
     needs: unit-test
     uses: making/oauth2-sso-demo/.github/workflows/build-oci-image-jvm.yaml@main
@@ -36,7 +36,7 @@ jobs:
       pom_dir: todo-frontend
       image_name: todo-frontend_jvm_aarch64
       image_file: todo-frontend_jvm_aarch64.yaml
-      runs_on: raspberrypi
+      image_platform: linux/arm64
   push-multi-arch-image-jvm:
     needs:
     - build-oci-image-jvm-amd64
