@@ -37,6 +37,7 @@ jobs:
       image_name: todo-frontend_jvm_aarch64
       image_file: todo-frontend_jvm_aarch64.yaml
       image_platform: linux/arm64
+      use_qemu: true
   push-multi-arch-image-jvm:
     needs:
     - build-oci-image-jvm-amd64

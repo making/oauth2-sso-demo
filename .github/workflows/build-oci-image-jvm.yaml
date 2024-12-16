@@ -22,6 +22,10 @@ on:
         required: false
         type: string
         default: linux/amd64
+      use_qemu:
+        required: false
+        type: boolean
+        default: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -40,6 +44,11 @@ jobs:
         CURRENT_VERSION=$(./mvnw -f ${{ inputs.pom_dir }} help:evaluate -Dexpression=project.version -q -DforceStdout)
         NEW_VERSION=$(echo $CURRENT_VERSION | sed "s/-SNAPSHOT/.${GITHUB_SHA}/")
         ./mvnw -f ${{ inputs.pom_dir }} versions:set -DnewVersion=${NEW_VERSION} -DgenerateBackupPoms=false --no-transfer-progress
+    - name: Set up QEMU
+      if: inputs.use_qemu
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: ${{ inputs.image_platform }}
     - name: build image (Paketo Buildpack)
       run: |
         OS_ARCH=$(./mvnw -f ${{ inputs.pom_dir }} help:evaluate -Dexpression=os.arch -q -DforceStdout)
