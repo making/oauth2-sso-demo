@@ -1,2 +1,2 @@
-image: ghcr.io/making/oauth2-sso-demo/todo-api@sha256:1eb1a75a039168c3962cd498229e64ee989a8d48f389bc40cb54cc3bd35912a3
-git_revision: ada83966b1c71338bd468b8383806f2427c4173d
+image: ghcr.io/making/oauth2-sso-demo/todo-api@sha256:7a21648348e988d596dd497a318ddecc73fd80cabb906bdac01ae6b4fd4bcd4e
+git_revision: 4b5f00e58beee37a7642a9a246b32d7c5323857c
