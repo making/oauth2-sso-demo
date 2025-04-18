@@ -1,5 +1,6 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { FaCheck, FaTrashAlt, FaPlus, FaSpinner } from 'react-icons/fa';
+import useSWR, { useSWRConfig } from 'swr';
 import {
     Container,
     Header,
@@ -21,55 +22,63 @@ interface Todo {
     finished: boolean;
 }
 
+interface UserData {
+    name: string;
+    csrfToken: string;
+}
+
+// Custom fetcher function with error handling
+const fetcher = async (url: string) => {
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+        const error = new Error('An error occurred while fetching the data.');
+        error.message = `Failed to fetch: ${response.status} ${response.statusText}`;
+        throw error;
+    }
+    
+    return response.json();
+};
+
 const TodoList = () => {
-    const [todos, setTodos] = useState<Todo[]>([]);
-    const [username, setUsername] = useState<string>('');
-    const [csrfToken, setCsrfToken] = useState<string>('');
     const [newTodoTitle, setNewTodoTitle] = useState<string>('');
     const [hideCompleted, setHideCompleted] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
     const [submitting, setSubmitting] = useState<boolean>(false);
+    const { mutate } = useSWRConfig();
 
+    // Using SWR to fetch todos
+    const { data: todos, error: todosError, isLoading: isTodosLoading } = useSWR<Todo[]>('/api/todos', fetcher, {
+        revalidateOnFocus: true,
+        onError: (err) => {
+            console.error('Error fetching todos:', err);
+            setError('Failed to load todos. Please refresh the page.');
+        }
+    });
+
+    // Using SWR to fetch user data
+    const { data: userData, error: userError, isLoading: isUserLoading } = useSWR<UserData>('/whoami', fetcher, {
+        revalidateOnFocus: false,
+        onError: (err) => {
+            console.error('Error fetching user data:', err);
+            setError('Failed to load user data. Please refresh the page.');
+        }
+    });
+
+    // Combined loading state
+    const isLoading = isTodosLoading || isUserLoading;
+    
+    // Make sure we show error from any source (local state or SWR errors)
+    // We use a side effect to set the local error state from SWR errors
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                // Fetch todos and username in parallel
-                const [todosResponse, userResponse] = await Promise.all([
-                    fetch('/api/todos'),
-                    fetch('/whoami')
-                ]);
-                
-                if (!todosResponse.ok) {
-                    throw new Error('Failed to fetch todos');
-                }
-                
-                if (!userResponse.ok) {
-                    throw new Error('Failed to fetch user data');
-                }
-                
-                const todosData: Todo[] = await todosResponse.json();
-                const userData = await userResponse.json();
-                
-                setTodos(todosData);
-                setUsername(userData.name);
-                setCsrfToken(userData.csrfToken);
-                setError(null);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setError('Failed to load data. Please refresh the page.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
+        if (todosError || userError) {
+            setError('Failed to load data. Please refresh the page.');
+        }
+    }, [todosError, userError]);
 
     const handleAddTodo = async (event: FormEvent) => {
         event.preventDefault();
-        if (!newTodoTitle || submitting) return;
+        if (!newTodoTitle || submitting || !userData) return;
 
         setSubmitting(true);
         setError(null);
@@ -79,7 +88,7 @@ const TodoList = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
+                    'X-CSRF-TOKEN': userData.csrfToken,
                 },
                 body: JSON.stringify({ todoTitle: newTodoTitle }),
             });
@@ -88,8 +97,8 @@ const TodoList = () => {
                 throw new Error('Failed to create todo');
             }
 
-            const newTodo: Todo = await response.json();
-            setTodos(prevTodos => [...prevTodos, newTodo]);
+            // Revalidate todos data after successful addition
+            await mutate('/api/todos');
             setNewTodoTitle('');
         } catch (error) {
             console.error('Error creating todo:', error);
@@ -100,13 +109,14 @@ const TodoList = () => {
     };
 
     const handleDeleteTodo = async (todoId: number) => {
+        if (!userData) return;
         setError(null);
 
         try {
             const response = await fetch(`/api/todos/${todoId}`, {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken,
+                    'X-CSRF-TOKEN': userData.csrfToken,
                 },
             });
 
@@ -114,7 +124,8 @@ const TodoList = () => {
                 throw new Error('Failed to delete todo');
             }
 
-            setTodos(prevTodos => prevTodos.filter(todo => todo.todoId !== todoId));
+            // Revalidate todos data after successful deletion
+            await mutate('/api/todos');
         } catch (error) {
             console.error('Error deleting todo:', error);
             setError('Failed to delete todo. Please try again.');
@@ -122,6 +133,8 @@ const TodoList = () => {
     };
 
     const handleToggleFinished = async (todoId: number) => {
+        if (!todos || !userData) return;
+        
         const todo = todos.find(todo => todo.todoId === todoId);
         if (!todo) return;
 
@@ -132,7 +145,7 @@ const TodoList = () => {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
+                    'X-CSRF-TOKEN': userData.csrfToken,
                 },
                 body: JSON.stringify({ finished: !todo.finished }),
             });
@@ -141,10 +154,8 @@ const TodoList = () => {
                 throw new Error('Failed to update todo');
             }
 
-            const updatedTodo: Todo = await response.json();
-            setTodos(prevTodos => 
-                prevTodos.map(t => (t.todoId === todoId ? updatedTodo : t))
-            );
+            // Revalidate todos data after successful update
+            await mutate('/api/todos');
         } catch (error) {
             console.error('Error updating todo:', error);
             setError('Failed to update todo. Please try again.');
@@ -163,7 +174,7 @@ const TodoList = () => {
         }).format(date);
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <Container>
                 <div className="flex flex-col items-center justify-center min-h-[50vh]">
@@ -178,7 +189,7 @@ const TodoList = () => {
         <Container>
             <Header>Todo List</Header>
             
-            {username && <WelcomeMessage username={username} />}
+            {userData && <WelcomeMessage username={userData.name} />}
             
             <div className="mb-8 bg-white p-6 rounded-lg shadow-md">
                 <form
@@ -228,7 +239,7 @@ const TodoList = () => {
                     </label>
                 </div>
                 <div className="text-sm text-gray-500">
-                    {todos.length} {todos.length === 1 ? 'task' : 'tasks'} total
+                    {todos?.length || 0} {todos?.length === 1 ? 'task' : 'tasks'} total
                 </div>
             </div>
             
@@ -238,7 +249,7 @@ const TodoList = () => {
                 </div>
             )}
             
-            {todos.length === 0 ? (
+            {!todos || todos.length === 0 ? (
                 <div className="bg-white p-8 text-center rounded-lg shadow-md animate-fade-in">
                     <p className="text-gray-500 mb-4">You don't have any tasks yet.</p>
                     <p className="text-gray-400 text-sm">Add a new task to get started!</p>
