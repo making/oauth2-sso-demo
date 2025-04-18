@@ -1,4 +1,5 @@
-import {useState, useEffect, FormEvent} from 'react';
+import { useState, useEffect, FormEvent } from 'react';
+import { FaCheck, FaTrashAlt, FaPlus, FaSpinner } from 'react-icons/fa';
 import {
     Container,
     Header,
@@ -27,45 +28,50 @@ const TodoList = () => {
     const [newTodoTitle, setNewTodoTitle] = useState<string>('');
     const [hideCompleted, setHideCompleted] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [submitting, setSubmitting] = useState<boolean>(false);
 
     useEffect(() => {
-        const fetchTodos = async () => {
+        const fetchData = async () => {
+            setLoading(true);
             try {
-                const response = await fetch('/api/todos');
-                if (!response.ok) {
+                // Fetch todos and username in parallel
+                const [todosResponse, userResponse] = await Promise.all([
+                    fetch('/api/todos'),
+                    fetch('/whoami')
+                ]);
+                
+                if (!todosResponse.ok) {
                     throw new Error('Failed to fetch todos');
                 }
-                const data: Todo[] = await response.json();
-                setTodos(data);
-            } catch (error) {
-                console.error('Error fetching todos:', error);
-                setError('Failed to fetch todos. Please try again.');
-            }
-        };
-
-        const fetchUsername = async () => {
-            try {
-                const response = await fetch('/whoami');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch username');
+                
+                if (!userResponse.ok) {
+                    throw new Error('Failed to fetch user data');
                 }
-                const data = await response.json();
-                setUsername(data.name);
-                setCsrfToken(data.csrfToken);
+                
+                const todosData: Todo[] = await todosResponse.json();
+                const userData = await userResponse.json();
+                
+                setTodos(todosData);
+                setUsername(userData.name);
+                setCsrfToken(userData.csrfToken);
+                setError(null);
             } catch (error) {
-                console.error('Error fetching username:', error);
-                setError('Failed to fetch username. Please try again.');
+                console.error('Error fetching data:', error);
+                setError('Failed to load data. Please refresh the page.');
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchTodos();
-        fetchUsername();
+        fetchData();
     }, []);
 
     const handleAddTodo = async (event: FormEvent) => {
         event.preventDefault();
-        if (!newTodoTitle) return;
+        if (!newTodoTitle || submitting) return;
 
+        setSubmitting(true);
         setError(null);
 
         try {
@@ -75,7 +81,7 @@ const TodoList = () => {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
                 },
-                body: JSON.stringify({todoTitle: newTodoTitle}),
+                body: JSON.stringify({ todoTitle: newTodoTitle }),
             });
 
             if (!response.ok) {
@@ -83,11 +89,13 @@ const TodoList = () => {
             }
 
             const newTodo: Todo = await response.json();
-            setTodos([...todos, newTodo]);
+            setTodos(prevTodos => [...prevTodos, newTodo]);
             setNewTodoTitle('');
         } catch (error) {
             console.error('Error creating todo:', error);
             setError('Failed to create todo. Please try again.');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -106,7 +114,7 @@ const TodoList = () => {
                 throw new Error('Failed to delete todo');
             }
 
-            setTodos(todos.filter((todo) => todo.todoId !== todoId));
+            setTodos(prevTodos => prevTodos.filter(todo => todo.todoId !== todoId));
         } catch (error) {
             console.error('Error deleting todo:', error);
             setError('Failed to delete todo. Please try again.');
@@ -114,7 +122,7 @@ const TodoList = () => {
     };
 
     const handleToggleFinished = async (todoId: number) => {
-        const todo = todos.find((todo) => todo.todoId === todoId);
+        const todo = todos.find(todo => todo.todoId === todoId);
         if (!todo) return;
 
         setError(null);
@@ -126,7 +134,7 @@ const TodoList = () => {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
                 },
-                body: JSON.stringify({finished: !todo.finished}),
+                body: JSON.stringify({ finished: !todo.finished }),
             });
 
             if (!response.ok) {
@@ -134,88 +142,168 @@ const TodoList = () => {
             }
 
             const updatedTodo: Todo = await response.json();
-            setTodos(todos.map((t) => (t.todoId === todoId ? updatedTodo : t)));
+            setTodos(prevTodos => 
+                prevTodos.map(t => (t.todoId === todoId ? updatedTodo : t))
+            );
         } catch (error) {
             console.error('Error updating todo:', error);
             setError('Failed to update todo. Please try again.');
         }
     };
 
+    // Format date to a more compact format to prevent line wrapping in table cells
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('default', {
+            year: '2-digit',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+        }).format(date);
+    };
+
+    if (loading) {
+        return (
+            <Container>
+                <div className="flex flex-col items-center justify-center min-h-[50vh]">
+                    <FaSpinner className="animate-spin text-4xl text-primary mb-4" />
+                    <p className="text-gray-600">Loading todos...</p>
+                </div>
+            </Container>
+        );
+    }
+
     return (
         <Container>
             <Header>Todo List</Header>
-            {username && <WelcomeMessage username={username}/>}
-            <form
-                onSubmit={handleAddTodo}
-                style={{display: 'flex', justifyContent: 'center', marginBottom: '20px'}}
-            >
-                <StyledInput
-                    value={newTodoTitle}
-                    onChange={(e) => setNewTodoTitle(e.target.value)}
-                    placeholder="Enter todo title"
-                />
-                <StyledButton type="submit">Add</StyledButton>
-            </form>
-            <div style={{textAlign: 'center', marginBottom: '10px'}}>
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={hideCompleted}
-                        onChange={() => setHideCompleted(!hideCompleted)}
-                        style={{marginRight: '5px'}}
-                    />
-                    Hide completed todos
-                </label>
+            
+            {username && <WelcomeMessage username={username} />}
+            
+            <div className="mb-8 bg-white p-6 rounded-lg shadow-md">
+                <form
+                    onSubmit={handleAddTodo}
+                    className="flex flex-col sm:flex-row items-center gap-3"
+                >
+                    <div className="w-full">
+                        <StyledInput
+                            value={newTodoTitle}
+                            onChange={(e) => setNewTodoTitle(e.target.value)}
+                            placeholder="What needs to be done?"
+                        />
+                    </div>
+                    <StyledButton 
+                        type="submit" 
+                        disabled={submitting}
+                        className="whitespace-nowrap flex items-center gap-2"
+                    >
+                        {submitting ? (
+                            <>
+                                <FaSpinner className="animate-spin" />
+                                Adding...
+                            </>
+                        ) : (
+                            <>
+                                <FaPlus />
+                                Add Task
+                            </>
+                        )}
+                    </StyledButton>
+                </form>
             </div>
-            {error && <p style={{color: 'red', textAlign: 'center'}}>{error}</p>}
-            <StyledTable>
-                <thead>
-                <tr>
-                    <TableCell header width={'200px'}>
-                        Title
-                    </TableCell>
-                    <TableCell header>Created At</TableCell>
-                    <TableCell header>Created By</TableCell>
-                    <TableCell header>Updated At</TableCell>
-                    <TableCell header>Updated By</TableCell>
-                    <TableCell header center>
-                        Actions
-                    </TableCell>
-                </tr>
-                </thead>
-                <tbody>
-                {todos
-                    .filter((todo) => !hideCompleted || !todo.finished)
-                    .map((todo) => (
-                        <tr
-                            key={todo.todoId}
-                            style={{backgroundColor: todo.finished ? '#eaffea' : '#fff'}}
-                        >
-                            <TableCell width="200px">
-                                {todo.finished ? <span>&#10004;</span> : ''} {todo.todoTitle}
+            
+            <div className="mb-4 flex justify-between items-center">
+                <div className="flex items-center">
+                    <label className="inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={hideCompleted}
+                            onChange={() => setHideCompleted(!hideCompleted)}
+                            className="sr-only peer"
+                        />
+                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        <span className="ms-3 text-sm font-medium text-gray-600">
+                            Hide completed
+                        </span>
+                    </label>
+                </div>
+                <div className="text-sm text-gray-500">
+                    {todos.length} {todos.length === 1 ? 'task' : 'tasks'} total
+                </div>
+            </div>
+            
+            {error && (
+                <div className="bg-danger-light text-danger-dark p-3 rounded-md mb-4 animate-fade-in">
+                    {error}
+                </div>
+            )}
+            
+            {todos.length === 0 ? (
+                <div className="bg-white p-8 text-center rounded-lg shadow-md animate-fade-in">
+                    <p className="text-gray-500 mb-4">You don't have any tasks yet.</p>
+                    <p className="text-gray-400 text-sm">Add a new task to get started!</p>
+                </div>
+            ) : (
+                <StyledTable>
+                    <thead>
+                        <tr>
+                            <TableCell header width="30%">
+                                Title
                             </TableCell>
-                            <TableCell>{new Date(todo.createdAt).toLocaleString()}</TableCell>
-                            <TableCell>{todo.createdBy}</TableCell>
-                            <TableCell>{new Date(todo.updatedAt).toLocaleString()}</TableCell>
-                            <TableCell>{todo.updatedBy}</TableCell>
-                            <TableCell center>
-                                <IconButton
-                                    onClick={() => handleToggleFinished(todo.todoId)}
-                                    icon={todo.finished ? <span>&#10004;</span> : <span>&#10003;</span>}
-                                    color={todo.finished ? '#28a745' : '#007bff'}
-                                    title="Toggle Finished"
-                                />
-                                <IconButton
-                                    onClick={() => handleDeleteTodo(todo.todoId)}
-                                    icon="&#128465;"
-                                    color="#dc3545"
-                                    title="Delete"
-                                />
+                            <TableCell header width="15%">Created</TableCell>
+                            <TableCell header width="15%">Created By</TableCell>
+                            <TableCell header width="15%">Updated</TableCell>
+                            <TableCell header width="15%">Updated By</TableCell>
+                            <TableCell header width="10%" center>
+                                Actions
                             </TableCell>
                         </tr>
-                    ))}
-                </tbody>
-            </StyledTable>
+                    </thead>
+                    <tbody>
+                        {todos
+                            .filter(todo => !hideCompleted || !todo.finished)
+                            .map(todo => (
+                                <tr
+                                    key={todo.todoId}
+                                    className={`todo-row ${todo.finished ? 'todo-row-completed' : ''}`}
+                                >
+                                    <TableCell width="30%">
+                                        <div className="flex items-center gap-2">
+                                            {todo.finished && (
+                                                <span className="inline-block min-w-5 w-5 h-5 bg-success rounded-full flex items-center justify-center text-white">
+                                                    <FaCheck size={10} />
+                                                </span>
+                                            )}
+                                            <span className={todo.finished ? 'line-through text-gray-500' : ''}>
+                                                {todo.todoTitle}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell width="15%">{formatDate(todo.createdAt)}</TableCell>
+                                    <TableCell width="15%">{todo.createdBy}</TableCell>
+                                    <TableCell width="15%">{formatDate(todo.updatedAt)}</TableCell>
+                                    <TableCell width="15%">{todo.updatedBy}</TableCell>
+                                    <TableCell width="10%" center>
+                                        <div className="flex justify-center space-x-2">
+                                            <IconButton
+                                                onClick={() => handleToggleFinished(todo.todoId)}
+                                                icon={<FaCheck />}
+                                                variant={todo.finished ? 'success' : 'primary'}
+                                                title={todo.finished ? 'Mark as incomplete' : 'Mark as complete'}
+                                            />
+                                            <IconButton
+                                                onClick={() => handleDeleteTodo(todo.todoId)}
+                                                icon={<FaTrashAlt />}
+                                                variant="danger"
+                                                title="Delete"
+                                            />
+                                        </div>
+                                    </TableCell>
+                                </tr>
+                            ))}
+                    </tbody>
+                </StyledTable>
+            )}
         </Container>
     );
 };

@@ -1,12 +1,12 @@
-import {ReactNode, CSSProperties, ChangeEvent} from 'react';
+import { ReactNode, CSSProperties, ChangeEvent, ButtonHTMLAttributes } from 'react';
 
 // Container for the whole TodoList app
 interface ContainerProps {
     children: ReactNode;
 }
 
-const Container = ({children}: ContainerProps) => (
-    <div style={{maxWidth: '800px', margin: '0 auto', fontFamily: 'Arial, sans-serif'}}>
+const Container = ({ children }: ContainerProps) => (
+    <div className="max-w-4xl mx-auto px-4 py-8 font-sans">
         {children}
     </div>
 );
@@ -16,66 +16,72 @@ interface HeaderProps {
     children: ReactNode;
 }
 
-const Header = ({children}: HeaderProps) => (
-    <h1 style={{textAlign: 'center', color: '#333', marginBottom: '20px'}}>
+const Header = ({ children }: HeaderProps) => (
+    <h1 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-primary to-primary-light drop-shadow-sm py-2 mb-6">
         {children}
     </h1>
 );
 
 // Styled button with hover effect
-interface StyledButtonProps {
+interface StyledButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
-    onClick?: () => void;
-    type?: 'button' | 'submit' | 'reset';
-    style?: CSSProperties;
+    variant?: 'primary' | 'success' | 'danger';
 }
 
-const StyledButton = ({children, onClick, type = 'button', style}: StyledButtonProps) => (
-    <button
-        type={type}
-        onClick={onClick}
-        style={{
-            padding: '10px 20px',
-            fontSize: '16px',
-            backgroundColor: '#28a745',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s',
-            ...style,
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#218838')}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#28a745')}
-    >
-        {children}
-    </button>
-);
+const StyledButton = ({ 
+    children, 
+    onClick, 
+    type = 'button', 
+    variant = 'primary', 
+    className = '',
+    ...rest 
+}: StyledButtonProps) => {
+    const baseClass = 'btn';
+    const variantClass = `btn-${variant}`;
+    
+    return (
+        <button
+            type={type}
+            onClick={onClick}
+            className={`${baseClass} ${variantClass} ${className}`}
+            {...rest}
+        >
+            {children}
+        </button>
+    );
+};
 
 // Small icon button for action controls (toggle and delete)
 interface IconButtonProps {
     icon: ReactNode;
-    color: string;
     onClick: () => void;
     title: string;
+    variant?: 'primary' | 'success' | 'danger';
 }
 
-const IconButton = ({icon, color, onClick, title}: IconButtonProps) => (
-    <button
-        onClick={onClick}
-        title={title}
-        style={{
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '16px',
-            color,
-            margin: '0 5px',
-        }}
-    >
-        {icon}
-    </button>
-);
+const IconButton = ({ 
+    icon, 
+    onClick, 
+    title, 
+    variant = 'primary' 
+}: IconButtonProps) => {
+    const variantClasses = {
+        primary: 'text-primary hover:text-primary-dark',
+        success: 'text-success hover:text-success-dark',
+        danger: 'text-danger hover:text-danger-dark',
+    };
+    
+    return (
+        <button
+            onClick={onClick}
+            title={title}
+            className={`bg-transparent border-none cursor-pointer p-2 transition-colors ${variantClasses[variant]}`}
+            aria-label={title}
+        >
+            {icon}
+        </button>
+    );
+};
 
 // Input field for entering todo title
 interface StyledInputProps {
@@ -84,21 +90,14 @@ interface StyledInputProps {
     placeholder?: string;
 }
 
-const StyledInput = ({value, onChange, placeholder}: StyledInputProps) => (
+const StyledInput = ({ value, onChange, placeholder }: StyledInputProps) => (
     <input
         type="text"
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        required={true}
-        style={{
-            padding: '10px',
-            width: '70%',
-            fontSize: '16px',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            marginRight: '10px',
-        }}
+        required
+        className="px-4 py-2 border border-gray-300 rounded-md w-full md:w-96 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
     />
 );
 
@@ -107,16 +106,12 @@ interface StyledTableProps {
     children: ReactNode;
 }
 
-const StyledTable = ({children}: StyledTableProps) => (
-    <table
-        style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        }}
-    >
-        {children}
-    </table>
+const StyledTable = ({ children }: StyledTableProps) => (
+    <div className="w-full overflow-x-auto rounded-lg shadow-md bg-white animate-fade-in">
+        <table className="w-full border-collapse">
+            {children}
+        </table>
+    </div>
 );
 
 // Table cell component with optional width
@@ -127,22 +122,32 @@ interface TableCellProps {
     width?: string;
 }
 
-const TableCell = ({children, header = false, center = false, width}: TableCellProps) => {
-    const baseStyle: CSSProperties = {
-        padding: '10px',
-        textAlign: center ? 'center' : 'left',
-        backgroundColor: header ? '#f4f4f4' : 'inherit',
-        borderBottom: header ? '2px solid #ddd' : '1px solid #ddd',
-        width: width || 'auto',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-    };
-
+const TableCell = ({ 
+    children, 
+    header = false, 
+    center = false, 
+    width 
+}: TableCellProps) => {
+    // Added truncate and fixed height classes to prevent line wrapping
+    const baseClass = "p-3 text-sm border-b border-gray-200 whitespace-nowrap overflow-hidden text-ellipsis";
+    const alignClass = center ? "text-center" : "text-left";
+    const headerClass = header ? "bg-gray-100 font-semibold text-gray-700" : "";
+    
+    const style: CSSProperties = {};
+    if (width) {
+        style.width = width;
+        // Add max-width to ensure proper truncation
+        style.maxWidth = width;
+    }
+    
     return header ? (
-        <th style={baseStyle}>{children}</th>
+        <th className={`${baseClass} ${alignClass} ${headerClass}`} style={style}>
+            {children}
+        </th>
     ) : (
-        <td style={baseStyle}>{children}</td>
+        <td className={`${baseClass} ${alignClass}`} style={style}>
+            {children}
+        </td>
     );
 };
 
@@ -151,9 +156,9 @@ interface WelcomeMessageProps {
     username: string;
 }
 
-const WelcomeMessage = ({username}: WelcomeMessageProps) => (
-    <p style={{textAlign: 'center', fontSize: '18px', color: '#555'}}>
-        Welcome, {username}!
+const WelcomeMessage = ({ username }: WelcomeMessageProps) => (
+    <p className="text-center text-lg text-gray-600 mb-6">
+        Welcome, <span className="font-semibold">{username}</span>!
     </p>
 );
 

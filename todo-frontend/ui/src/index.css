@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 min-h-screen;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+}
+
+@layer components {
+  .todo-row {
+    @apply transition-all duration-200 hover:bg-gray-50;
+  }
+  
+  .todo-row-completed {
+    @apply bg-green-50;
+  }
+  
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-dark focus:ring-primary;
+  }
+  
+  .btn-success {
+    @apply bg-success text-white hover:bg-success-dark focus:ring-success;
+  }
+  
+  .btn-danger {
+    @apply bg-danger text-white hover:bg-danger-dark focus:ring-danger;
+  }
+}
