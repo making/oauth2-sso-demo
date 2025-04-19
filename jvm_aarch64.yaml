@@ -1,2 +1,2 @@
-image: ghcr.io/making/oauth2-sso-demo/todo-frontend@sha256:3e6c9375f2c0fea8cc53150ecc6023f3fd32eab4cc1e0a36eba0a7d12966b4e3
+image: ghcr.io/making/oauth2-sso-demo/todo-frontend-webflux@sha256:47e196879d62fdde85a53663bc0bbc12eee6f21c49cdb92b7ee3110c4ddf622c
 git_revision: 1187c56d6a8b683a90bca4a71eaa3bb0b48c18b1
