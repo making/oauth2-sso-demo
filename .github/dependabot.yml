@@ -5,16 +5,19 @@
 
 version: 2
 updates:
-  - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/authorization" # Location of package manifests
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/todo-api" # Location of package manifests
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/todo-frontend" # Location of package manifests
-    schedule:
-      interval: "weekly"
-
+- package-ecosystem: "maven" # See documentation for possible values
+  directory: "/authorization" # Location of package manifests
+  schedule:
+    interval: "weekly"
+- package-ecosystem: "maven" # See documentation for possible values
+  directory: "/todo-api" # Location of package manifests
+  schedule:
+    interval: "weekly"
+- package-ecosystem: "maven" # See documentation for possible values
+  directory: "/todo-frontend" # Location of package manifests
+  schedule:
+    interval: "weekly"
+- package-ecosystem: "maven" # See documentation for possible values
+  directory: "/todo-frontend-webflux" # Location of package manifests
+  schedule:
+    interval: "weekly"

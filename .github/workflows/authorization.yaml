@@ -1,4 +1,4 @@
-name: Authorization
+name: Authorization CI
 on:
   push:
     branches:
@@ -16,43 +16,39 @@ on:
     - .github/workflows/*
 jobs:
   unit-test:
-    uses: making/oauth2-sso-demo/.github/workflows/unit-test.yaml@main
-    with:
-      pom_dir: authorization
+    uses: categolj/workflows/.github/workflows/unit-test.yaml@main
   build-oci-image-jvm-amd64:
     needs: unit-test
-    uses: making/oauth2-sso-demo/.github/workflows/build-oci-image-jvm.yaml@main
+    uses: categolj/workflows/.github/workflows/build-oci-image-jvm.yaml@main
     with:
       pom_dir: authorization
-      image_name: authorization_jvm_amd64
-      image_file: authorization_jvm_amd64.yaml
-      image_platform: linux/amd64
+      image_name: jvm_amd64
+      image_file: jvm_amd64.yaml
+      runs_on: ubuntu-latest
   build-oci-image-jvm-aarch64:
     needs: unit-test
-    uses: making/oauth2-sso-demo/.github/workflows/build-oci-image-jvm.yaml@main
+    uses: categolj/workflows/.github/workflows/build-oci-image-jvm.yaml@main
     with:
       pom_dir: authorization
-      image_name: authorization_jvm_aarch64
-      image_file: authorization_jvm_aarch64.yaml
-      image_platform: linux/arm64
-      use_qemu: true
+      image_name: jvm_aarch64
+      image_file: jvm_aarch64.yaml
+      runs_on: ubuntu-24.04-arm
   push-multi-arch-image-jvm:
     needs:
     - build-oci-image-jvm-amd64
     - build-oci-image-jvm-aarch64
-    uses: making/oauth2-sso-demo/.github/workflows/push-multi-arch-image.yaml@main
+    uses: categolj/workflows/.github/workflows/push-multi-arch-image.yaml@main
     with:
       prefix: jvm
-      pom_dir: authorization
   save-image-jvm-amd64:
     needs: build-oci-image-jvm-amd64
-    uses: making/workflows/.github/workflows/save-images.yaml@main
+    uses: categolj/workflows/.github/workflows/save-images.yaml@main
     with:
-      image_name: authorization_jvm_amd64
-      image_file: authorization_jvm_amd64.yaml
+      image_name: jvm_amd64
+      image_file: jvm_amd64.yaml
   save-image-jvm-aarch64:
     needs: build-oci-image-jvm-aarch64
-    uses: making/workflows/.github/workflows/save-images.yaml@main
+    uses: categolj/workflows/.github/workflows/save-images.yaml@main
     with:
-      image_name: authorization_jvm_aarch64
-      image_file: authorization_jvm_aarch64.yaml
+      image_name: jvm_aarch64
+      image_file: jvm_aarch64.yaml

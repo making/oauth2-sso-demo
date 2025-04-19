@@ -1,18 +1,20 @@
-name: Todo API CI
+name: Todo Frontend Webflux CI
 on:
   push:
     branches:
     - main
     paths:
-    - todo-api/src/**
-    - todo-api/pom.xml
+    - todo-frontend-webflux/src/**
+    - todo-frontend/ui/**
+    - todo-frontend-webflux/pom.xml
     - .github/workflows/*
   pull_request:
     branches:
     - main
     paths:
-    - todo-api/src/**
-    - todo-api/pom.xml
+    - todo-frontend-webflux/src/**
+    - todo-frontend/ui/**
+    - todo-frontend-webflux/pom.xml
     - .github/workflows/*
 jobs:
   unit-test:
@@ -21,7 +23,7 @@ jobs:
     needs: unit-test
     uses: categolj/workflows/.github/workflows/build-oci-image-jvm.yaml@main
     with:
-      pom_dir: todo-api
+      pom_dir: todo-frontend-webflux
       image_name: jvm_amd64
       image_file: jvm_amd64.yaml
       runs_on: ubuntu-latest
@@ -29,7 +31,7 @@ jobs:
     needs: unit-test
     uses: categolj/workflows/.github/workflows/build-oci-image-jvm.yaml@main
     with:
-      pom_dir: todo-api
+      pom_dir: todo-frontend-webflux
       image_name: jvm_aarch64
       image_file: jvm_aarch64.yaml
       runs_on: ubuntu-24.04-arm
