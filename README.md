@@ -18,16 +18,16 @@ Java 21+ and docker are required.
 
 Visit http://localhost:8080 (todo-frontend). The first time you visit, you will be redirected to http://127.0.0.1:9000 (authorization).
 
-<img width="1024" alt="image" src="https://github.com/user-attachments/assets/5f2764a8-4fde-41be-b0e6-d21f04d7fdeb">
+<img width="1024" alt="Image" src="https://github.com/user-attachments/assets/047a501b-6a76-4a8e-8706-7bd5e016c54e" />
 
 * Username: `john@example.com`
 * Password: `password`
 
-<img width="1024" alt="image" src="https://github.com/user-attachments/assets/c4933de2-1895-4c08-8f11-d6c67dcc2f34">
+<img width="1024" alt="Image" src="https://github.com/user-attachments/assets/3a5bd8ec-6904-40cb-bea3-f03b164c68f0" />
 
 Feel free to add new Todos or complete them.
 
-<img width="1024" alt="image" src="https://github.com/user-attachments/assets/9e115ad3-3e5a-4d69-a418-695c1e3e15e7">
+<img width="1024" alt="Image" src="https://github.com/user-attachments/assets/9bae2e0c-e8a8-4f64-b4c4-b852f7561b12" />
 
 You can see the tracing via Zipkin (http://localhost:9411)
 
