@@ -20,7 +20,7 @@ public record Todo(String todoId, String todoTitle, boolean finished, Instant cr
 			name) -> InstantValidatorBuilder.of(name, c -> c.notNull()).build();
 
 	private static Function<String, StringValidator<String>> usernameValidator = (
-			name) -> StringValidatorBuilder.of(name, c -> c.email().notBlank().lessThanOrEqual(255)).build();
+			name) -> StringValidatorBuilder.of(name, c -> c.notBlank().lessThanOrEqual(255)).build();
 
 	public static StringValidator<String> todoIdValidator = StringValidatorBuilder
 		.of("todoId", c -> c.notBlank().lessThanOrEqual(255))
