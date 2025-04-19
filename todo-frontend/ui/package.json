@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build --outDir ../target/classes/META-INF/resources --emptyOutDir",
+    "build-for-webflux": "tsc -b && vite build --outDir ../../todo-frontend-webflux/target/classes/META-INF/resources --emptyOutDir",
     "lint": "eslint .",
     "preview": "vite preview"
   },
