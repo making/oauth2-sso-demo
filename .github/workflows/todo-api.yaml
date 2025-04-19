@@ -41,6 +41,7 @@ jobs:
     - build-oci-image-jvm-aarch64
     uses: categolj/workflows/.github/workflows/push-multi-arch-image.yaml@main
     with:
+      pom_dir: todo-api
       prefix: jvm
   save-image-jvm-amd64:
     needs: build-oci-image-jvm-amd64

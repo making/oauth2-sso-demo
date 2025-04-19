@@ -18,7 +18,7 @@ jobs:
   unit-test:
     uses: categolj/workflows/.github/workflows/unit-test.yaml@main
     with:
-      pom_dir: todo-frontend
+      pom_dir: authorization
   build-oci-image-jvm-amd64:
     needs: unit-test
     uses: categolj/workflows/.github/workflows/build-oci-image-jvm.yaml@main
@@ -41,6 +41,7 @@ jobs:
     - build-oci-image-jvm-aarch64
     uses: categolj/workflows/.github/workflows/push-multi-arch-image.yaml@main
     with:
+      pom_dir: authorization
       prefix: jvm
   save-image-jvm-amd64:
     needs: build-oci-image-jvm-amd64
