@@ -226,7 +226,7 @@ class TodoApiApplicationTests {
 	}
 
 	@Test
-	void shouldReturnBadRequestForInvalidTodo() {
+	void shouldReturnBadRequestForInvalidTodoCreate() {
 		String accessToken = this.accessTokenSupplier.apply(Set.of("todo:write"));
 		ResponseEntity<JsonNode> response = this.restClient.post()
 			.uri("/todos")
@@ -288,6 +288,28 @@ class TodoApiApplicationTests {
 				.updatedBy("test@example.com")
 				.build());
 		}
+	}
+
+	@Test
+	@Order(4)
+	void shouldReturnBadRequestForInvalidTodoUpdate() {
+		String accessToken = this.accessTokenSupplier.apply(Set.of("todo:write"));
+		ResponseEntity<JsonNode> response = this.restClient.patch()
+			.uri("/todos/{todoId}", "00000000-0000-0000-0000-000000000001")
+			.contentType(MediaType.APPLICATION_JSON)
+			.body("""
+					{"finished": true, "todoTitle": "%s"}
+					""".formatted("a".repeat(256)))
+			.headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
+			.retrieve()
+			.toEntity(JsonNode.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNotNull();
+		assertThat(response.getBody().get("message")).isEqualTo(new TextNode("Validation failed"));
+		assertThat(response.getBody().has("violations")).isTrue();
+		assertThat(response.getBody().get("violations").size()).isEqualTo(1);
+		assertThat(response.getBody().get("violations").get(0).get("defaultMessage")).isEqualTo(
+				new TextNode("The size of \"todoTitle\" must be less than or equal to 255. The given size is 256"));
 	}
 
 	@Test
