@@ -45,7 +45,7 @@ public class TodoService {
 		return this.todoRepository.save(updated);
 	}
 
-	public Todo update(String todoId, String todoTitle, boolean finished, String email) {
+	public Todo update(String todoId, String todoTitle, boolean finished, String username) {
 		return this.todoRepository.findById(todoId).map(t -> {
 			TodoBuilder builder = TodoBuilder.from(t);
 			boolean touched = false;
@@ -58,7 +58,7 @@ public class TodoService {
 				touched = true;
 			}
 			if (touched) {
-				builder.updatedBy(email);
+				builder.updatedBy(username);
 				builder.updatedAt(this.clock.instant());
 			}
 			return builder.build();
