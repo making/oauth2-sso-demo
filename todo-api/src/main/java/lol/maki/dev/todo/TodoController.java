@@ -1,5 +1,7 @@
 package lol.maki.dev.todo;
 
+import am.ik.yavi.core.ConstraintViolations;
+import am.ik.yavi.core.ConstraintViolationsException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -41,19 +43,20 @@ public class TodoController {
 	}
 
 	@PostMapping(path = "")
-	public ResponseEntity<Todo> postTodos(@RequestBody Todo todo, @AuthenticationPrincipal Jwt jwt,
+	public ResponseEntity<Todo> postTodos(@RequestBody Map<String, Object> request, @AuthenticationPrincipal Jwt jwt,
 			UriComponentsBuilder builder) {
 		String email = jwt.getClaimAsString("email");
-		Todo created = this.todoService.create(todo.todoTitle(), email);
+		Todo created = this.todoService.create((String) request.get("todoTitle"), email);
 		URI uri = builder.pathSegment("todos", created.todoId()).build().toUri();
 		return ResponseEntity.created(uri).body(created);
 	}
 
 	@PatchMapping(path = "/{todoId}")
-	public ResponseEntity<Todo> patchTodo(@PathVariable("todoId") String todoId, @RequestBody Todo todo,
-			@AuthenticationPrincipal Jwt jwt) {
+	public ResponseEntity<Todo> patchTodo(@PathVariable("todoId") String todoId,
+			@RequestBody Map<String, Object> request, @AuthenticationPrincipal Jwt jwt) {
 		String email = jwt.getClaimAsString("email");
-		Todo updated = this.todoService.update(todoId, todo.todoTitle(), todo.finished(), email);
+		Todo updated = this.todoService.update(todoId, (String) request.get("todoTitle"),
+				(Boolean) request.get("finished"), email);
 		return ResponseEntity.ok(updated);
 	}
 
@@ -66,6 +69,13 @@ public class TodoController {
 	@ExceptionHandler(TodoService.NotFoundException.class)
 	public ResponseEntity<?> handleNotFound(TodoService.NotFoundException e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+	}
+
+	@ExceptionHandler(ConstraintViolationsException.class)
+	public ResponseEntity<?> handleConstraintViolations(ConstraintViolationsException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(Map.of("message", "Validation failed", "violations",
+					ConstraintViolations.of(e.violations()).details()));
 	}
 
 }
