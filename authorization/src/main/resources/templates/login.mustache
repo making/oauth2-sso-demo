@@ -5,78 +5,206 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-        /* Container */
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            font-family: Arial, sans-serif;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #fff;
+        /* Global styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: rgb(249, 250, 251); /* bg-gray-50 */
+            color: rgb(17, 24, 39); /* text-gray-900 */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 3rem; /* pt-12 */
+        }
+        
+        /* Container styles */
+        .container {
+            max-width: 4xl;
+            width: 90%;
+            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
         /* Header */
         .header {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 700; /* font-bold */
             text-align: center;
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem; /* mb-6 */
+            background-image: linear-gradient(to right, #1971c2, #228be6, #4dabf7); /* from-primary-dark via-primary to-primary-light */
+            background-clip: text;
+            color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.05)); /* drop-shadow-sm */
+            padding: 0.5rem 0; /* py-2 */
         }
-
+        
+        /* Welcome Message */
+        .welcome-message {
+            text-align: center;
+            font-size: 1.125rem; /* text-lg */
+            color: rgb(75, 85, 99); /* text-gray-600 */
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        
+        /* Form Container */
+        .form-container {
+            margin-bottom: 2rem; /* mb-8 */
+            background-color: white;
+            padding: 1.5rem; /* p-6 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* Form */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem; /* gap-3 */
+        }
+        
+        /* Input Container */
+        .input-container {
+            width: 100%;
+            margin-bottom: 0.5rem; /* mb-2 */
+        }
+        
         /* Input Field */
         .input-field {
+            display: block;
             width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            padding: 0.5rem 1rem; /* px-4 py-2 */
+            font-size: 1rem;
+            border: 1px solid rgb(209, 213, 219); /* border-gray-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            transition: all 0.2s;
+            height: 2.5rem; /* h-10 */
+            line-height: 1.5rem; /* leading-6 */
         }
-
-        /* Styled Button */
+        
+        .input-field:focus {
+            outline: none;
+            border-color: transparent;
+            box-shadow: 0 0 0 2px rgb(34, 139, 230); /* focus:ring-2 focus:ring-primary */
+        }
+        
+        /* Button */
         .styled-button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            background-color: #28a745;
-            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem; /* gap-2 */
+            padding: 0.5rem 1rem; /* px-4 py-2 */
+            font-size: 1rem;
+            font-weight: 500; /* font-medium */
             border: none;
-            border-radius: 4px;
+            border-radius: 0.375rem; /* rounded-md */
+            background-color: #228be6; /* bg-primary */
+            color: white; /* text-white */
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.2s;
+            white-space: nowrap;
+            margin-top: 0.5rem; /* mt-2 */
+            height: 2.5rem; /* h-10 */
+            line-height: 1.5rem; /* leading-6 */
         }
-
+        
         .styled-button:hover {
-            background-color: #218838;
+            background-color: #1971c2; /* hover:bg-primary-dark */
         }
-
-        /* Message */
+        
+        .styled-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgb(255, 255, 255), 0 0 0 4px #228be6; /* focus:ring-2 focus:ring-offset-2 focus:ring-primary */
+        }
+        
+        /* Error message */
         .error-message {
+            background-color: #ff8787; /* bg-danger-light */
+            color: #e03131; /* text-danger-dark */
+            padding: 0.75rem; /* p-3 */
+            border-radius: 0.375rem; /* rounded-md */
+            margin-bottom: 1rem; /* mb-4 */
             text-align: center;
-            color: red;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* Label */
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem; /* mb-2 */
+            font-weight: 500; /* font-medium */
+            color: rgb(75, 85, 99); /* text-gray-600 */
+            font-size: 0.875rem; /* text-sm */
+        }
+        
+        /* For small screens, stack form elements */
+        @media (min-width: 640px) {
+            .login-form {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">Login</div>
-    {{#springMacroRequestContext.request.parameterMap.error}}
-        <div class="error-message">{{SPRING_SECURITY_LAST_EXCEPTION}}</div>
-    {{/springMacroRequestContext.request.parameterMap.error}}
-    <form action="/login" method="post">
-        <label>
-            <input type="text" name="username" placeholder="Username" class="input-field" required>
-        </label>
-        <label>
-            <input type="password" name="password" placeholder="Password" class="input-field" required>
-        </label>
-        {{#_csrf}}
-            <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
-        {{/_csrf}}
-        <button type="submit" class="styled-button">Login</button>
-    </form>
+    <h1 class="header">Authentication Service</h1>
+    
+    <p class="welcome-message">Please sign in to continue</p>
+    
+    <div class="form-container">
+        {{#springMacroRequestContext.request.parameterMap.error}}
+            <div class="error-message">{{SPRING_SECURITY_LAST_EXCEPTION}}</div>
+        {{/springMacroRequestContext.request.parameterMap.error}}
+        
+        <form action="/login" method="post" class="login-form">
+            <div class="input-container">
+                <input 
+                    type="text" 
+                    id="username"
+                    name="username" 
+                    placeholder="Username" 
+                    class="input-field" 
+                    required
+                >
+            </div>
+            
+            <div class="input-container">
+                <input 
+                    type="password" 
+                    id="password"
+                    name="password" 
+                    placeholder="Password" 
+                    class="input-field" 
+                    required
+                >
+            </div>
+            
+            {{#_csrf}}
+                <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+            {{/_csrf}}
+            
+            <button type="submit" class="styled-button">
+                Login
+            </button>
+        </form>
+    </div>
 </div>
 
 </body>
