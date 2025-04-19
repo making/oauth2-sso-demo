@@ -19,6 +19,8 @@ on:
 jobs:
   unit-test:
     uses: categolj/workflows/.github/workflows/unit-test.yaml@main
+    with:
+      pom_dir: todo-frontend
   build-oci-image-jvm-amd64:
     needs: unit-test
     uses: categolj/workflows/.github/workflows/build-oci-image-jvm.yaml@main
