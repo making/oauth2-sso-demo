@@ -1,2 +1,2 @@
-image: ghcr.io/making/oauth2-sso-demo/authorization@sha256:caf5d2de6dcdf511f92beee883502b2ba4f9f9398a5cfda771478398f39e4213
-git_revision: fd2f1d59dd5f1767e8634c09c5171c47c6df6a6b
+image: ghcr.io/making/oauth2-sso-demo/authorization@sha256:85ebf00aff9a06b6fd421b7ed1e39514c7e44d6655b8187535e2cdee382f8076
+git_revision: d25d4ed616b1da45a10e6d985a637f3f03d2cd2d
