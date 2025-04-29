@@ -44,7 +44,7 @@ public record Todo(String todoId, String todoTitle, boolean finished, Instant cr
 		.apply("updated");
 
 	public static final Arguments7Validator<String, String, Boolean, Instant, String, Instant, String, Todo> validator = Arguments7Validator
-		.unwrap(todoTitleValidator.split(todoTitleValidator)
+		.unwrap(todoIdValidator.split(todoTitleValidator)
 			.split(finishedValidator)
 			.apply(Arguments::of)
 			.<Arguments7<String, String, Boolean, Instant, String, Instant, String>>compose(Arguments7::first3)
