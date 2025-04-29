@@ -49,7 +49,7 @@ public record Todo(String todoId, String todoTitle, boolean finished, Instant cr
 			.apply(Arguments::of)
 			.<Arguments7<String, String, Boolean, Instant, String, Instant, String>>compose(Arguments7::first3)
 			.combine(createdValidator.compose(args -> Arguments.of(args.arg4(), args.arg5())))
-			.combine(updatedValidator.compose(args -> Arguments.of(args.arg6(), args.arg7())))
+			.combine(updatedValidator.compose(Arguments7::last2))
 			.apply((a1, a2, a3) -> new Todo(a1.arg1(), a1.arg2(), a1.arg3(), a2.arg1(), a2.arg2(), a3.arg1(),
 					a3.arg2())));
 
