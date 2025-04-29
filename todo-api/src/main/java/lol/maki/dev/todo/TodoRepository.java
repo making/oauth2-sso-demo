@@ -6,15 +6,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TodoRepository {
 
-	private final Map<String, Todo> map = Collections.synchronizedMap(new LinkedHashMap<>());
+	private final Map<UUID, Todo> map = Collections.synchronizedMap(new LinkedHashMap<>());
 
-	public Optional<Todo> findById(String todoId) {
+	public Optional<Todo> findById(UUID todoId) {
 		return Optional.ofNullable(this.map.get(todoId));
 	}
 
@@ -27,7 +27,7 @@ public class TodoRepository {
 		return todo;
 	}
 
-	public void deleteById(String todoId) {
+	public void deleteById(UUID todoId) {
 		this.map.remove(todoId);
 	}
 

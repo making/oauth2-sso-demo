@@ -5,6 +5,7 @@ import am.ik.yavi.core.ConstraintViolationsException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,7 +38,7 @@ public class TodoController {
 	}
 
 	@GetMapping(path = "/{todoId}")
-	public ResponseEntity<Todo> getTodo(@PathVariable("todoId") String todoId) {
+	public ResponseEntity<Todo> getTodo(@PathVariable("todoId") UUID todoId) {
 		Todo todo = this.todoService.getTodo(todoId);
 		return ResponseEntity.ok(todo);
 	}
@@ -47,13 +48,13 @@ public class TodoController {
 			UriComponentsBuilder builder) {
 		String email = jwt.getClaimAsString("email");
 		Todo created = this.todoService.create((String) request.get("todoTitle"), email);
-		URI uri = builder.pathSegment("todos", created.todoId()).build().toUri();
+		URI uri = builder.pathSegment("todos", created.todoId().toString()).build().toUri();
 		return ResponseEntity.created(uri).body(created);
 	}
 
 	@PatchMapping(path = "/{todoId}")
-	public ResponseEntity<Todo> patchTodo(@PathVariable("todoId") String todoId,
-			@RequestBody Map<String, Object> request, @AuthenticationPrincipal Jwt jwt) {
+	public ResponseEntity<Todo> patchTodo(@PathVariable("todoId") UUID todoId, @RequestBody Map<String, Object> request,
+			@AuthenticationPrincipal Jwt jwt) {
 		String email = jwt.getClaimAsString("email");
 		Todo updated = this.todoService.update(todoId, (String) request.get("todoTitle"),
 				(Boolean) request.get("finished"), email);
@@ -61,7 +62,7 @@ public class TodoController {
 	}
 
 	@DeleteMapping(path = "/{todoId}")
-	public ResponseEntity<Void> deleteTodo(@PathVariable("todoId") String todoId) {
+	public ResponseEntity<Void> deleteTodo(@PathVariable("todoId") UUID todoId) {
 		this.todoService.deleteById(todoId);
 		return ResponseEntity.noContent().build();
 	}

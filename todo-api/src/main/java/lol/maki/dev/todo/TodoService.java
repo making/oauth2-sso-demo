@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.util.IdGenerator;
 
@@ -26,14 +27,14 @@ public class TodoService {
 		return this.todoRepository.findAll();
 	}
 
-	public Todo getTodo(String todoId) {
+	public Todo getTodo(UUID todoId) {
 		return this.todoRepository.findById(todoId).orElseThrow(() -> new NotFoundException(todoId));
 	}
 
 	public Todo create(String todoTitle, String email) {
 		Instant now = this.clock.instant();
 		Todo todo = TodoBuilder.todo()
-			.todoId(this.idGenerator.generateId().toString())
+			.todoId(this.idGenerator.generateId())
 			.todoTitle(todoTitle)
 			.finished(false)
 			.createdBy(email)
@@ -45,7 +46,7 @@ public class TodoService {
 		return this.todoRepository.save(updated);
 	}
 
-	public Todo update(String todoId, String todoTitle, boolean finished, String username) {
+	public Todo update(UUID todoId, String todoTitle, boolean finished, String username) {
 		return this.todoRepository.findById(todoId).map(t -> {
 			TodoBuilder builder = TodoBuilder.from(t);
 			boolean touched = false;
@@ -65,13 +66,13 @@ public class TodoService {
 		}).map(this.todoRepository::save).orElseThrow(() -> new NotFoundException(todoId));
 	}
 
-	public void deleteById(String todoId) {
+	public void deleteById(UUID todoId) {
 		this.todoRepository.deleteById(todoId);
 	}
 
 	public static class NotFoundException extends RuntimeException {
 
-		public NotFoundException(String todoId) {
+		public NotFoundException(UUID todoId) {
 			super("Todo not found: todoId=%s".formatted(todoId));
 		}
 

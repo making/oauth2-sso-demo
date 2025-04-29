@@ -71,7 +71,7 @@ class TodoApiApplicationTests {
 				.toEntity(Todo.class);
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 			assertThat(response.getBody()).isEqualTo(TodoBuilder.todo()
-				.todoId("00000000-0000-0000-0000-000000000001")
+				.todoId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
 				.todoTitle("Hello World!")
 				.finished(false)
 				.createdAt(Instant.parse("2024-11-01T00:00:00Z"))
@@ -92,7 +92,7 @@ class TodoApiApplicationTests {
 				.toEntity(Todo.class);
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 			assertThat(response.getBody()).isEqualTo(TodoBuilder.todo()
-				.todoId("00000000-0000-0000-0000-000000000002")
+				.todoId(UUID.fromString("00000000-0000-0000-0000-000000000002"))
 				.todoTitle("Test Todo!")
 				.finished(false)
 				.createdAt(Instant.parse("2024-11-01T00:00:01Z"))
@@ -135,7 +135,7 @@ class TodoApiApplicationTests {
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody()).containsExactly(
 				TodoBuilder.todo()
-					.todoId("00000000-0000-0000-0000-000000000001")
+					.todoId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
 					.todoTitle("Hello World!")
 					.finished(false)
 					.createdAt(Instant.parse("2024-11-01T00:00:00Z"))
@@ -144,7 +144,7 @@ class TodoApiApplicationTests {
 					.updatedBy("test@example.com")
 					.build(),
 				TodoBuilder.todo()
-					.todoId("00000000-0000-0000-0000-000000000002")
+					.todoId(UUID.fromString("00000000-0000-0000-0000-000000000002"))
 					.todoTitle("Test Todo!")
 					.finished(false)
 					.createdAt(Instant.parse("2024-11-01T00:00:01Z"))
@@ -182,7 +182,7 @@ class TodoApiApplicationTests {
 				.toEntity(Todo.class);
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(response.getBody()).isEqualTo(TodoBuilder.todo()
-				.todoId("00000000-0000-0000-0000-000000000001")
+				.todoId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
 				.todoTitle("Hello World!")
 				.finished(false)
 				.createdAt(Instant.parse("2024-11-01T00:00:00Z"))
@@ -199,7 +199,7 @@ class TodoApiApplicationTests {
 				.toEntity(Todo.class);
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(response.getBody()).isEqualTo(TodoBuilder.todo()
-				.todoId("00000000-0000-0000-0000-000000000002")
+				.todoId(UUID.fromString("00000000-0000-0000-0000-000000000002"))
 				.todoTitle("Test Todo!")
 				.finished(false)
 				.createdAt(Instant.parse("2024-11-01T00:00:01Z"))
@@ -262,7 +262,7 @@ class TodoApiApplicationTests {
 				.toEntity(Todo.class);
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(response.getBody()).isEqualTo(TodoBuilder.todo()
-				.todoId("00000000-0000-0000-0000-000000000001")
+				.todoId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
 				.todoTitle("Hello World!!")
 				.finished(true)
 				.createdAt(Instant.parse("2024-11-01T00:00:00Z"))
@@ -279,7 +279,7 @@ class TodoApiApplicationTests {
 				.toEntity(Todo.class);
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(response.getBody()).isEqualTo(TodoBuilder.todo()
-				.todoId("00000000-0000-0000-0000-000000000001")
+				.todoId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
 				.todoTitle("Hello World!!")
 				.finished(true)
 				.createdAt(Instant.parse("2024-11-01T00:00:00Z"))
