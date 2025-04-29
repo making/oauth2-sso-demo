@@ -43,7 +43,7 @@ public record Todo(String todoId, String todoTitle, boolean finished, Instant cr
 	public static final Arguments2Validator<Instant, String, Arguments2<Instant, String>> updatedValidator = auditInfoValidator
 		.apply("updated");
 
-	public static Arguments7Validator<String, String, Boolean, Instant, String, Instant, String, Todo> validator = Arguments7Validator
+	public static final Arguments7Validator<String, String, Boolean, Instant, String, Instant, String, Todo> validator = Arguments7Validator
 		.unwrap(todoTitleValidator.split(todoTitleValidator)
 			.split(finishedValidator)
 			.apply(Arguments::of)
