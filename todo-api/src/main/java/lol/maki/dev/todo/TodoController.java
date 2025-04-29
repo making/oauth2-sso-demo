@@ -1,10 +1,14 @@
 package lol.maki.dev.todo;
 
+import am.ik.yavi.arguments.Arguments;
+import am.ik.yavi.arguments.Arguments1Validator;
+import am.ik.yavi.builder.StringValidatorBuilder;
 import am.ik.yavi.core.ConstraintViolations;
 import am.ik.yavi.core.ConstraintViolationsException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,20 +48,21 @@ public class TodoController {
 	}
 
 	@PostMapping(path = "")
-	public ResponseEntity<Todo> postTodos(@RequestBody Map<String, Object> request, @AuthenticationPrincipal Jwt jwt,
+	public ResponseEntity<Todo> postTodos(@RequestBody Map<String, String> request, @AuthenticationPrincipal Jwt jwt,
 			UriComponentsBuilder builder) {
+		TodoCreateRequest req = TodoCreateRequest.parse(request);
 		String email = jwt.getClaimAsString("email");
-		Todo created = this.todoService.create((String) request.get("todoTitle"), email);
+		Todo created = this.todoService.create(req.todoTitle(), email);
 		URI uri = builder.pathSegment("todos", created.todoId().toString()).build().toUri();
 		return ResponseEntity.created(uri).body(created);
 	}
 
 	@PatchMapping(path = "/{todoId}")
-	public ResponseEntity<Todo> patchTodo(@PathVariable("todoId") UUID todoId, @RequestBody Map<String, Object> request,
+	public ResponseEntity<Todo> patchTodo(@PathVariable("todoId") UUID todoId, @RequestBody Map<String, String> request,
 			@AuthenticationPrincipal Jwt jwt) {
+		TodoUpdateRequest req = TodoUpdateRequest.parse(request);
 		String email = jwt.getClaimAsString("email");
-		Todo updated = this.todoService.update(todoId, (String) request.get("todoTitle"),
-				(Boolean) request.get("finished"), email);
+		Todo updated = this.todoService.update(todoId, req.todoTitle(), req.finished(), email);
 		return ResponseEntity.ok(updated);
 	}
 
@@ -77,6 +82,29 @@ public class TodoController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 			.body(Map.of("message", "Validation failed", "violations",
 					ConstraintViolations.of(e.violations()).details()));
+	}
+
+	record TodoCreateRequest(String todoTitle) {
+		private static final Arguments1Validator<Map<String, String>, TodoCreateRequest> validator = Todo.todoTitleValidator
+			.andThen(TodoCreateRequest::new)
+			.compose(map -> map.get("todoTitle"));
+
+		static TodoCreateRequest parse(Map<String, String> map) {
+			return validator.validated(map);
+		}
+	}
+
+	record TodoUpdateRequest(String todoTitle, Boolean finished) {
+		private static final Arguments1Validator<Map<String, String>, TodoUpdateRequest> validator = Todo.todoTitleValidator
+			.split(StringValidatorBuilder.of("finished", c -> c.oneOf(Set.of("true", "false")))
+				.build(Boolean::parseBoolean)
+				.andThen(Todo.finishedValidator))
+			.apply(TodoUpdateRequest::new)
+			.compose(map -> Arguments.of(map.get("todoTitle"), map.get("finished")));
+
+		static TodoUpdateRequest parse(Map<String, String> map) {
+			return validator.validated(map);
+		}
 	}
 
 }
