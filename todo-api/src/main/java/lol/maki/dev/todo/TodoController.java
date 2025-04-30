@@ -8,7 +8,6 @@ import am.ik.yavi.core.ConstraintViolationsException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,7 +95,7 @@ public class TodoController {
 
 	record TodoUpdateRequest(String todoTitle, Boolean finished) {
 		private static final Arguments1Validator<Map<String, String>, TodoUpdateRequest> validator = Todo.todoTitleValidator
-			.split(StringValidatorBuilder.of("finished", c -> c.oneOf(Set.of("true", "false")))
+			.split(StringValidatorBuilder.of("finished", c -> c.notNull().oneOf(List.of("true", "false")))
 				.build(Boolean::parseBoolean)
 				.andThen(Todo.finishedValidator))
 			.apply(TodoUpdateRequest::new)
