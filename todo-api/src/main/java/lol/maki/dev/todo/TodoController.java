@@ -3,8 +3,9 @@ package lol.maki.dev.todo;
 import am.ik.yavi.arguments.Arguments;
 import am.ik.yavi.arguments.Arguments1Validator;
 import am.ik.yavi.builder.StringValidatorBuilder;
+import am.ik.yavi.core.ConstraintViolation;
 import am.ik.yavi.core.ConstraintViolations;
-import am.ik.yavi.core.ConstraintViolationsException;
+import am.ik.yavi.core.Validated;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -47,22 +48,24 @@ public class TodoController {
 	}
 
 	@PostMapping(path = "")
-	public ResponseEntity<Todo> postTodos(@RequestBody Map<String, String> request, @AuthenticationPrincipal Jwt jwt,
+	public ResponseEntity<?> postTodos(@RequestBody Map<String, String> request, @AuthenticationPrincipal Jwt jwt,
 			UriComponentsBuilder builder) {
-		TodoCreateRequest req = TodoCreateRequest.parse(request);
-		String email = jwt.getClaimAsString("email");
-		Todo created = this.todoService.create(req.todoTitle(), email);
-		URI uri = builder.pathSegment("todos", created.todoId().toString()).build().toUri();
-		return ResponseEntity.created(uri).body(created);
+		return TodoCreateRequest.parse(request).fold(this::badRequest, req -> {
+			String email = jwt.getClaimAsString("email");
+			Todo created = this.todoService.create(req.todoTitle(), email);
+			URI uri = builder.pathSegment("todos", created.todoId().toString()).build().toUri();
+			return ResponseEntity.created(uri).body(created);
+		});
 	}
 
 	@PatchMapping(path = "/{todoId}")
-	public ResponseEntity<Todo> patchTodo(@PathVariable("todoId") UUID todoId, @RequestBody Map<String, String> request,
+	public ResponseEntity<?> patchTodo(@PathVariable("todoId") UUID todoId, @RequestBody Map<String, String> request,
 			@AuthenticationPrincipal Jwt jwt) {
-		TodoUpdateRequest req = TodoUpdateRequest.parse(request);
-		String email = jwt.getClaimAsString("email");
-		Todo updated = this.todoService.update(todoId, req.todoTitle(), req.finished(), email);
-		return ResponseEntity.ok(updated);
+		return TodoUpdateRequest.parse(request).fold(this::badRequest, req -> {
+			String email = jwt.getClaimAsString("email");
+			Todo updated = this.todoService.update(todoId, req.todoTitle(), req.finished(), email);
+			return ResponseEntity.ok(updated);
+		});
 	}
 
 	@DeleteMapping(path = "/{todoId}")
@@ -76,11 +79,9 @@ public class TodoController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
 	}
 
-	@ExceptionHandler(ConstraintViolationsException.class)
-	public ResponseEntity<?> handleConstraintViolations(ConstraintViolationsException e) {
+	ResponseEntity<Map<String, Object>> badRequest(List<ConstraintViolation> violations) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(Map.of("message", "Validation failed", "violations",
-					ConstraintViolations.of(e.violations()).details()));
+			.body(Map.of("message", "Validation failed", "violations", ConstraintViolations.of(violations).details()));
 	}
 
 	record TodoCreateRequest(String todoTitle) {
@@ -88,8 +89,8 @@ public class TodoController {
 			.andThen(TodoCreateRequest::new)
 			.compose(map -> map.get("todoTitle"));
 
-		static TodoCreateRequest parse(Map<String, String> map) {
-			return validator.validated(map);
+		static Validated<TodoCreateRequest> parse(Map<String, String> map) {
+			return validator.validate(map);
 		}
 	}
 
@@ -101,8 +102,8 @@ public class TodoController {
 			.apply(TodoUpdateRequest::new)
 			.compose(map -> Arguments.of(map.get("todoTitle"), map.get("finished")));
 
-		static TodoUpdateRequest parse(Map<String, String> map) {
-			return validator.validated(map);
+		static Validated<TodoUpdateRequest> parse(Map<String, String> map) {
+			return validator.validate(map);
 		}
 	}
 
