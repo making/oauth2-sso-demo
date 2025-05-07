@@ -17,7 +17,7 @@ interface HeaderProps {
 }
 
 const Header = ({ children }: HeaderProps) => (
-    <h1 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-primary to-primary-light drop-shadow-sm py-2 mb-6">
+    <h1 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-linear-to-r from-primary-dark via-primary to-primary-light drop-shadow-xs py-2 mb-6">
         {children}
     </h1>
 );
@@ -97,7 +97,7 @@ const StyledInput = ({ value, onChange, placeholder }: StyledInputProps) => (
         onChange={onChange}
         placeholder={placeholder}
         required
-        className="px-4 py-2 border border-gray-300 rounded-md w-full md:w-96 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        className="px-4 py-2 border border-gray-300 rounded-md w-full md:w-96 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-primary focus:border-transparent"
     />
 );
 

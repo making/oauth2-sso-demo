@@ -1,6 +1,71 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-primary-light: #4dabf7;
+  --color-primary: #228be6;
+  --color-primary-dark: #1971c2;
+
+  --color-success-light: #69db7c;
+  --color-success: #40c057;
+  --color-success-dark: #2b9a3f;
+
+  --color-danger-light: #ff8787;
+  --color-danger: #fa5252;
+  --color-danger-dark: #e03131;
+
+  --animate-fade-in: fadeIn 0.3s ease-in-out;
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility todo-row {
+  @apply transition-all duration-200 hover:bg-gray-50;
+}
+
+@utility todo-row-completed {
+  @apply bg-green-50;
+}
+
+@utility btn {
+  @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2;
+}
+
+@utility btn-primary {
+  @apply bg-primary text-white hover:bg-primary-dark focus:ring-primary;
+}
+
+@utility btn-success {
+  @apply bg-success text-white hover:bg-success-dark focus:ring-success;
+}
+
+@utility btn-danger {
+  @apply bg-danger text-white hover:bg-danger-dark focus:ring-danger;
+}
 
 @layer base {
   body {
@@ -9,31 +74,5 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold;
-  }
-}
-
-@layer components {
-  .todo-row {
-    @apply transition-all duration-200 hover:bg-gray-50;
-  }
-  
-  .todo-row-completed {
-    @apply bg-green-50;
-  }
-  
-  .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
-  }
-  
-  .btn-primary {
-    @apply bg-primary text-white hover:bg-primary-dark focus:ring-primary;
-  }
-  
-  .btn-success {
-    @apply bg-success text-white hover:bg-success-dark focus:ring-success;
-  }
-  
-  .btn-danger {
-    @apply bg-danger text-white hover:bg-danger-dark focus:ring-danger;
   }
 }
