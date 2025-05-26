@@ -135,7 +135,7 @@
 			<plugin>
 				<groupId>io.spring.javaformat</groupId>
 				<artifactId>spring-javaformat-maven-plugin</artifactId>
-				<version>0.0.44</version>
+				<version>0.0.45</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
