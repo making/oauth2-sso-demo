@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>am.ik.spring.logbook</groupId>
 			<artifactId>access-logger-logbook</artifactId>
-			<version>0.1.3</version>
+			<version>0.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>cc.jilt</groupId>
