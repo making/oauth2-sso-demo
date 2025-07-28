@@ -115,7 +115,7 @@
     <dependency>
       <groupId>com.microsoft.playwright</groupId>
       <artifactId>playwright</artifactId>
-      <version>1.52.0</version>
+      <version>1.54.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
