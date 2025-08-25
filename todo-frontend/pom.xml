@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>am.ik.spring.logbook</groupId>
 			<artifactId>access-logger-logbook</artifactId>
-			<version>0.2.0</version>
+			<version>0.3.2</version>
 		</dependency>
 
 		<dependency>
