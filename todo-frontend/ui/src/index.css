@@ -1,17 +1,27 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-primary-light: #4dabf7;
-  --color-primary: #228be6;
-  --color-primary-dark: #1971c2;
+  --color-accent: #d4e157;
+  --color-accent-hover: #c6d343;
+  --color-accent-active: #b8c534;
 
-  --color-success-light: #69db7c;
-  --color-success: #40c057;
-  --color-success-dark: #2b9a3f;
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-surface-hover: rgba(255, 255, 255, 0.06);
 
-  --color-danger-light: #ff8787;
-  --color-danger: #fa5252;
-  --color-danger-dark: #e03131;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-hover: rgba(255, 255, 255, 0.18);
+
+  --color-text-primary: #e0e0e0;
+  --color-text-heading: #f0ead6;
+  --color-text-muted: rgba(255, 255, 255, 0.35);
+  --color-text-subtle: rgba(255, 255, 255, 0.5);
+
+  --color-danger: #f87171;
+  --color-danger-bg: rgba(239, 68, 68, 0.1);
+  --color-danger-border: rgba(239, 68, 68, 0.25);
+
+  --color-success: #a3e635;
+  --color-success-muted: rgba(163, 230, 53, 0.15);
 
   --animate-fade-in: fadeIn 0.3s ease-in-out;
 
@@ -25,54 +35,79 @@
   }
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--color-border);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    background: #0e0e10;
+    color: var(--color-text-primary);
+    position: relative;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
   }
 }
 
 @utility todo-row {
-  @apply transition-all duration-200 hover:bg-gray-50;
+  @apply transition-all duration-200;
+  &:hover {
+    background: var(--color-surface-hover);
+  }
 }
 
 @utility todo-row-completed {
-  @apply bg-green-50;
+  background: var(--color-success-muted);
 }
 
 @utility btn {
-  @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2;
+  @apply px-4 py-2 rounded-[10px] font-bold transition-colors duration-150 focus:outline-hidden uppercase tracking-wider text-sm;
 }
 
 @utility btn-primary {
-  @apply bg-primary text-white hover:bg-primary-dark focus:ring-primary;
+  background: var(--color-accent);
+  color: #0e0e10;
+  &:hover {
+    background: var(--color-accent-hover);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  &:active {
+    background: var(--color-accent-active);
+  }
 }
 
 @utility btn-success {
-  @apply bg-success text-white hover:bg-success-dark focus:ring-success;
+  background: var(--color-accent);
+  color: #0e0e10;
+  &:hover {
+    background: var(--color-accent-hover);
+  }
 }
 
 @utility btn-danger {
-  @apply bg-danger text-white hover:bg-danger-dark focus:ring-danger;
-}
-
-@layer base {
-  body {
-    @apply bg-gray-50 text-gray-900 min-h-screen;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--color-border);
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
   }
 }

@@ -30,13 +30,13 @@ interface UserData {
 // Custom fetcher function with error handling
 const fetcher = async (url: string) => {
     const response = await fetch(url);
-    
+
     if (!response.ok) {
         const error = new Error('An error occurred while fetching the data.');
         error.message = `Failed to fetch: ${response.status} ${response.statusText}`;
         throw error;
     }
-    
+
     return response.json();
 };
 
@@ -67,7 +67,7 @@ const TodoList = () => {
 
     // Combined loading state
     const isLoading = isTodosLoading || isUserLoading;
-    
+
     // Make sure we show error from any source (local state or SWR errors)
     // We use a side effect to set the local error state from SWR errors
     useEffect(() => {
@@ -134,7 +134,7 @@ const TodoList = () => {
 
     const handleToggleFinished = async (todoId: number) => {
         if (!todos || !userData) return;
-        
+
         const todo = todos.find(todo => todo.todoId === todoId);
         if (!todo) return;
 
@@ -178,8 +178,8 @@ const TodoList = () => {
         return (
             <Container>
                 <div className="flex flex-col items-center justify-center min-h-[50vh]">
-                    <FaSpinner className="animate-spin text-4xl text-primary mb-4" />
-                    <p className="text-gray-600">Loading todos...</p>
+                    <FaSpinner className="animate-spin text-4xl text-[#d4e157] mb-4" />
+                    <p className="text-[rgba(255,255,255,0.35)]">Loading todos...</p>
                 </div>
             </Container>
         );
@@ -188,10 +188,10 @@ const TodoList = () => {
     return (
         <Container>
             <Header>Todo List</Header>
-            
+
             {userData && <WelcomeMessage username={userData.name} />}
-            
-            <div className="mb-8 bg-white p-6 rounded-lg shadow-md">
+
+            <div className="mb-8 bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] p-6 rounded-[10px]">
                 <form
                     onSubmit={handleAddTodo}
                     className="flex flex-col sm:flex-row items-center gap-3"
@@ -203,10 +203,10 @@ const TodoList = () => {
                             placeholder="What needs to be done?"
                         />
                     </div>
-                    <StyledButton 
-                        type="submit" 
+                    <StyledButton
+                        type="submit"
                         disabled={submitting}
-                        className="whitespace-nowrap flex items-center gap-2"
+                        className="whitespace-nowrap flex items-center gap-2 h-14"
                     >
                         {submitting ? (
                             <>
@@ -222,7 +222,7 @@ const TodoList = () => {
                     </StyledButton>
                 </form>
             </div>
-            
+
             <div className="mb-4 flex justify-between items-center">
                 <div className="flex items-center">
                     <label className="inline-flex items-center cursor-pointer">
@@ -232,27 +232,32 @@ const TodoList = () => {
                             onChange={() => setHideCompleted(!hideCompleted)}
                             className="sr-only peer"
                         />
-                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-hidden peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:rtl:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                        <span className="ms-3 text-sm font-medium text-gray-600">
+                        <div className="relative w-11 h-6 bg-[rgba(255,255,255,0.1)] peer-focus:outline-hidden peer-focus:ring-2 peer-focus:ring-[#d4e157] rounded-full peer peer-checked:after:translate-x-full peer-checked:rtl:after:-translate-x-full peer-checked:after:border-[rgba(255,255,255,0.1)] after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-[rgba(255,255,255,0.3)] after:border-[rgba(255,255,255,0.1)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#d4e157]"></div>
+                        <span className="ms-3 text-sm font-medium text-[rgba(255,255,255,0.35)]">
                             Hide completed
                         </span>
                     </label>
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-[rgba(255,255,255,0.35)]">
                     {todos?.length || 0} {todos?.length === 1 ? 'task' : 'tasks'} total
                 </div>
             </div>
-            
+
             {error && (
-                <div className="bg-danger-light text-danger-dark p-3 rounded-md mb-4 animate-fade-in">
-                    {error}
+                <div className="flex items-center gap-2 bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.25)] rounded-[8px] p-3 mb-4 animate-fade-in">
+                    <svg className="w-4 h-4 text-[#f87171] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    <span className="text-[0.8125rem] text-[#fca5a5]">{error}</span>
                 </div>
             )}
-            
+
             {!todos || todos.length === 0 ? (
-                <div className="bg-white p-8 text-center rounded-lg shadow-md animate-fade-in">
-                    <p className="text-gray-500 mb-4">You don't have any tasks yet.</p>
-                    <p className="text-gray-400 text-sm">Add a new task to get started!</p>
+                <div className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] p-8 text-center rounded-[10px] animate-fade-in">
+                    <p className="text-[rgba(255,255,255,0.35)] mb-4">You don't have any tasks yet.</p>
+                    <p className="text-[rgba(255,255,255,0.2)] text-sm">Add a new task to get started!</p>
                 </div>
             ) : (
                 <StyledTable>
@@ -281,11 +286,11 @@ const TodoList = () => {
                                     <TableCell width="30%">
                                         <div className="flex items-center gap-2">
                                             {todo.finished && (
-                                                <span className="inline-block min-w-5 w-5 h-5 bg-success rounded-full flex items-center justify-center text-white">
+                                                <span className="inline-flex min-w-5 w-5 h-5 bg-[#d4e157] rounded-full items-center justify-center text-[#0e0e10]">
                                                     <FaCheck size={10} />
                                                 </span>
                                             )}
-                                            <span className={todo.finished ? 'line-through text-gray-500' : ''}>
+                                            <span className={todo.finished ? 'line-through text-[rgba(255,255,255,0.35)]' : ''}>
                                                 {todo.todoTitle}
                                             </span>
                                         </div>

@@ -6,7 +6,7 @@ interface ContainerProps {
 }
 
 const Container = ({ children }: ContainerProps) => (
-    <div className="max-w-4xl mx-auto px-4 py-8 font-sans">
+    <div className="max-w-4xl mx-auto px-4 py-8 relative z-1">
         {children}
     </div>
 );
@@ -17,7 +17,7 @@ interface HeaderProps {
 }
 
 const Header = ({ children }: HeaderProps) => (
-    <h1 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-linear-to-r from-primary-dark via-primary to-primary-light drop-shadow-xs py-2 mb-6">
+    <h1 className="text-5xl font-bold italic text-[#f0ead6] mb-3 tracking-tight" style={{ fontFamily: 'Georgia, "Times New Roman", Times, serif' }}>
         {children}
     </h1>
 );
@@ -28,17 +28,17 @@ interface StyledButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'success' | 'danger';
 }
 
-const StyledButton = ({ 
-    children, 
-    onClick, 
-    type = 'button', 
-    variant = 'primary', 
+const StyledButton = ({
+    children,
+    onClick,
+    type = 'button',
+    variant = 'primary',
     className = '',
-    ...rest 
+    ...rest
 }: StyledButtonProps) => {
     const baseClass = 'btn';
     const variantClass = `btn-${variant}`;
-    
+
     return (
         <button
             type={type}
@@ -59,18 +59,18 @@ interface IconButtonProps {
     variant?: 'primary' | 'success' | 'danger';
 }
 
-const IconButton = ({ 
-    icon, 
-    onClick, 
-    title, 
-    variant = 'primary' 
+const IconButton = ({
+    icon,
+    onClick,
+    title,
+    variant = 'primary'
 }: IconButtonProps) => {
     const variantClasses = {
-        primary: 'text-primary hover:text-primary-dark',
-        success: 'text-success hover:text-success-dark',
-        danger: 'text-danger hover:text-danger-dark',
+        primary: 'text-[rgba(255,255,255,0.5)] hover:text-[#d4e157]',
+        success: 'text-[#d4e157] hover:text-[#c6d343]',
+        danger: 'text-[rgba(255,255,255,0.35)] hover:text-[#f87171]',
     };
-    
+
     return (
         <button
             onClick={onClick}
@@ -97,7 +97,7 @@ const StyledInput = ({ value, onChange, placeholder }: StyledInputProps) => (
         onChange={onChange}
         placeholder={placeholder}
         required
-        className="px-4 py-2 border border-gray-300 rounded-md w-full md:w-96 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-primary focus:border-transparent"
+        className="w-full md:w-96 h-14 px-5 text-[1.0625rem] text-[#e0e0e0] bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] rounded-[10px] transition-all duration-150 placeholder:text-[rgba(255,255,255,0.2)] hover:border-[rgba(255,255,255,0.18)] focus:outline-none focus:border-[rgba(255,255,255,0.3)] focus:bg-[rgba(255,255,255,0.06)]"
     />
 );
 
@@ -107,7 +107,7 @@ interface StyledTableProps {
 }
 
 const StyledTable = ({ children }: StyledTableProps) => (
-    <div className="w-full overflow-x-auto rounded-lg shadow-md bg-white animate-fade-in">
+    <div className="w-full overflow-x-auto rounded-[10px] border border-[rgba(255,255,255,0.1)] animate-fade-in">
         <table className="w-full border-collapse">
             {children}
         </table>
@@ -122,24 +122,22 @@ interface TableCellProps {
     width?: string;
 }
 
-const TableCell = ({ 
-    children, 
-    header = false, 
-    center = false, 
-    width 
+const TableCell = ({
+    children,
+    header = false,
+    center = false,
+    width
 }: TableCellProps) => {
-    // Added truncate and fixed height classes to prevent line wrapping
-    const baseClass = "p-3 text-sm border-b border-gray-200 whitespace-nowrap overflow-hidden text-ellipsis";
+    const baseClass = "p-3 text-sm border-b border-[rgba(255,255,255,0.08)] whitespace-nowrap overflow-hidden text-ellipsis";
     const alignClass = center ? "text-center" : "text-left";
-    const headerClass = header ? "bg-gray-100 font-semibold text-gray-700" : "";
-    
+    const headerClass = header ? "bg-[rgba(255,255,255,0.04)] font-medium text-[rgba(255,255,255,0.35)] text-xs uppercase tracking-[0.18em]" : "text-[#e0e0e0]";
+
     const style: CSSProperties = {};
     if (width) {
         style.width = width;
-        // Add max-width to ensure proper truncation
         style.maxWidth = width;
     }
-    
+
     return header ? (
         <th className={`${baseClass} ${alignClass} ${headerClass}`} style={style}>
             {children}
@@ -157,8 +155,8 @@ interface WelcomeMessageProps {
 }
 
 const WelcomeMessage = ({ username }: WelcomeMessageProps) => (
-    <p className="text-center text-lg text-gray-600 mb-6">
-        Welcome, <span className="font-semibold">{username}</span>!
+    <p className="text-[0.8125rem] font-medium text-[rgba(255,255,255,0.35)] tracking-[0.2em] uppercase mb-8">
+        Welcome, <span className="text-[#f0ead6] font-semibold normal-case tracking-normal">{username}</span>!
     </p>
 );
 
