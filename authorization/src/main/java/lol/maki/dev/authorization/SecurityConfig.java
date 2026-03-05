@@ -1,5 +1,6 @@
 package lol.maki.dev.authorization;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -57,14 +58,16 @@ public class SecurityConfig {
 
 	@Bean
 	public JWKSource<SecurityContext> jwkSource(JwtProperties props) {
-		List<JWK> keys = props.keys()
-			.entrySet()
-			.stream()
-			.map(entry -> (JWK) new RSAKey.Builder(entry.getValue().publicKey())
-				.privateKey(entry.getValue().privateKey())
-				.keyID(entry.getKey())
-				.build())
-			.toList();
+		List<JWK> keys = props.keySets().stream().map(keySet -> {
+			try {
+				return (JWK) new RSAKey.Builder(keySet.publicKey()).privateKey(keySet.privateKey())
+					.keyIDFromThumbprint()
+					.build();
+			}
+			catch (JOSEException e) {
+				throw new IllegalStateException(e);
+			}
+		}).toList();
 		return new ImmutableJWKSet<>(new JWKSet(keys));
 	}
 
