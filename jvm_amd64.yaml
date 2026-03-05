@@ -1,8 +1,8 @@
-image: ghcr.io/making/oauth2-sso-demo/todo-api@sha256:70b06d58fede6d8ba2aa4854322736fd0446fcd228b1a87be61913741c0dbfc7
+image: ghcr.io/making/oauth2-sso-demo/todo-frontend-webflux@sha256:ac2ba19a0ed18c25a441243033588b91c8757cce66be84037ab200188bf62cdb
 git_revision: b65bc287dda58e20957dc6af826b77a4188676ca
 deployment:
   image:
-    repository: ghcr.io/making/oauth2-sso-demo/todo-api
-    digest: sha256:70b06d58fede6d8ba2aa4854322736fd0446fcd228b1a87be61913741c0dbfc7
+    repository: ghcr.io/making/oauth2-sso-demo/todo-frontend-webflux
+    digest: sha256:ac2ba19a0ed18c25a441243033588b91c8757cce66be84037ab200188bf62cdb
   podLabels:
     github.com/revision: b65bc287dda58e20957dc6af826b77a4188676ca
