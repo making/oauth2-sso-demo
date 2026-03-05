@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.images.ImagePullPolicy;
+import org.testcontainers.images.PullPolicy;
 import org.testcontainers.utility.MountableFile;
 
 import org.springframework.boot.test.context.TestConfiguration;
@@ -18,6 +20,7 @@ class TestcontainersConfiguration {
 	@Bean
 	GenericContainer<?> authorizationServer() {
 		return new GenericContainer<>("ghcr.io/making/oauth2-sso-demo/authorization:jvm")
+			.withImagePullPolicy(PullPolicy.alwaysPull())
 			.withEnv("spring.security.user.name", "test@example.com")
 			.withEnv("spring.security.user.password", "test")
 			.withEnv("spring.security.oauth2.authorizationserver.client.todo-frontend.registration.client-id",

@@ -2,6 +2,7 @@ package lol.maki.dev.todo;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +49,10 @@ final class OAuth2 {
 			.split("=")[1];
 	}
 
+	static String codeChallenge(String codeVerifier) {
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(DigestUtils.sha256(codeVerifier));
+	}
+
 	static String authorizationCodeFlow(URI issuerUrl, RestClient restClient, User user, Client client, URI redirectUri,
 			Set<String> scopes) {
 		String jsessionId = formLogin(URI.create(issuerUrl + "/login"), restClient, user);
@@ -54,12 +60,15 @@ final class OAuth2 {
 				restClient.get().uri(issuerUrl + "/.well-known/openid-configuration").retrieve().body(JsonNode.class));
 		String tokenEndpoint = openIdConfiguration.get("token_endpoint").asText();
 		String authorizationEndpoint = openIdConfiguration.get("authorization_endpoint").asText();
+		String codeVerifier = "abc123";
 		ResponseEntity<String> redirectToCode = restClient.get()
 			.uri(authorizationEndpoint,
 					uri -> uri.queryParam("response_type", "code")
 						.queryParam("client_id", client.clientId())
 						.queryParam("redirect_uri", redirectUri)
 						.queryParam("scope", String.join(" ", scopes))
+						.queryParam("code_challenge", codeChallenge(codeVerifier))
+						.queryParam("code_challenge_method", "S256")
 						.build())
 			.cookie("JSESSIONID", jsessionId)
 			.retrieve()
@@ -72,7 +81,8 @@ final class OAuth2 {
 			.uri(tokenEndpoint)
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.headers(httpHeaders -> httpHeaders.setBasicAuth(client.clientId(), client.clientSecret()))
-			.body("grant_type=authorization_code&code=%s&redirect_uri=%s".formatted(code, redirectUri))
+			.body("grant_type=authorization_code&code=%s&code_verifier=%s&redirect_uri=%s".formatted(code, codeVerifier,
+					redirectUri))
 			.retrieve()
 			.body(JsonNode.class);
 		return Objects.requireNonNull(token).get("access_token").asText();
