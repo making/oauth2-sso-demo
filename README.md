@@ -2,10 +2,10 @@
 
 This demo app consists of following three components:
 
-* [Authorization](authorization) ... OAuth2/OIDC Authorization Server. Using [Spring Authorization Server](https://docs.spring.io/spring-authorization-server/reference/index.html).
-* [Todo API](todo-api) ... OAuth2 Resource Server. Provides REST API. Using [Spring Security's OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/6.4/servlet/oauth2/resource-server/index.html).
-* [Todo Frontend](todo-frontend) ... Web UI (React + Spring MVC) backed by [Spring Security's OAuth2 Login](https://docs.spring.io/spring-security/reference/6.4/servlet/oauth2/login/index.html) + [OAuth 2.0 Client](https://docs.spring.io/spring-security/reference/6.4/servlet/oauth2/client/index.html).
-* [Todo Frontend WebFlux](todo-frontend) ... Web UI (React + Spring WebFlux) backed by [Spring Security's OAuth2 Login](https://docs.spring.io/spring-security/reference/6.4/reactive/oauth2/login/index.html) + [OAuth 2.0 Client](https://docs.spring.io/spring-security/reference/6.4/reactive/oauth2/client/index.html).
+* [Authorization](authorization) ... OAuth2/OIDC Authorization Server. Using [Spring Authorization Server](https://docs.spring.io/spring-security/reference/7.0/servlet/oauth2/authorization-server/index.html).
+* [Todo API](todo-api) ... OAuth2 Resource Server. Provides REST API. Using [Spring Security's OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/7.0/servlet/oauth2/resource-server/index.html).
+* [Todo Frontend](todo-frontend) ... Web UI (React + Spring MVC) backed by [Spring Security's OAuth2 Login](https://docs.spring.io/spring-security/reference/7.0/servlet/oauth2/login/index.html) + [OAuth 2.0 Client](https://docs.spring.io/spring-security/reference/7.0/servlet/oauth2/client/index.html).
+* [Todo Frontend WebFlux](todo-frontend) ... Web UI (React + Spring WebFlux) backed by [Spring Security's OAuth2 Login](https://docs.spring.io/spring-security/reference/7.0/reactive/oauth2/login/index.html) + [OAuth 2.0 Client](https://docs.spring.io/spring-security/reference/7.0/reactive/oauth2/client/index.html).
 
 ## How to run
 
