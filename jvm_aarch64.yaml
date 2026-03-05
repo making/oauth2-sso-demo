@@ -1,8 +1,8 @@
-image: ghcr.io/making/oauth2-sso-demo/authorization@sha256:b41b19060be32eee82e877e7acf835ff3a5a1562bb75cbb366332a7a5d221fd9
-git_revision: cb8f12b1bd0814f9be07727388c3e28de7063edd
+image: ghcr.io/making/oauth2-sso-demo/todo-api@sha256:fc454f0f635deedb63f1aa391bd67b625850a1183776a1042fea9745007a7b2f
+git_revision: dbde42507340be3f474d437fe901d8e18293727c
 deployment:
   image:
-    repository: ghcr.io/making/oauth2-sso-demo/authorization
-    digest: sha256:b41b19060be32eee82e877e7acf835ff3a5a1562bb75cbb366332a7a5d221fd9
+    repository: ghcr.io/making/oauth2-sso-demo/todo-api
+    digest: sha256:fc454f0f635deedb63f1aa391bd67b625850a1183776a1042fea9745007a7b2f
   podLabels:
-    github.com/revision: cb8f12b1bd0814f9be07727388c3e28de7063edd
+    github.com/revision: dbde42507340be3f474d437fe901d8e18293727c
