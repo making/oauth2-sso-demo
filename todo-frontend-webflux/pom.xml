@@ -42,12 +42,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webclient</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-jackson</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -56,12 +50,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webflux</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-jackson</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -98,10 +86,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-jackson2</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

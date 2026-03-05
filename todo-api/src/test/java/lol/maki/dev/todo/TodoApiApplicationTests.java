@@ -1,7 +1,5 @@
 package lol.maki.dev.todo;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
@@ -26,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.StringNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -222,7 +222,7 @@ class TodoApiApplicationTests {
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 		assertThat(response.getBody()).isNotNull();
 		assertThat(response.getBody().get("message"))
-			.isEqualTo(new TextNode("Todo not found: todoId=%s".formatted(todoId)));
+			.isEqualTo(new StringNode("Todo not found: todoId=%s".formatted(todoId)));
 	}
 
 	@Test
@@ -239,11 +239,11 @@ class TodoApiApplicationTests {
 			.toEntity(JsonNode.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNotNull();
-		assertThat(response.getBody().get("message")).isEqualTo(new TextNode("Validation failed"));
+		assertThat(response.getBody().get("message")).isEqualTo(new StringNode("Validation failed"));
 		assertThat(response.getBody().has("violations")).isTrue();
 		assertThat(response.getBody().get("violations").size()).isEqualTo(1);
 		assertThat(response.getBody().get("violations").get(0).get("defaultMessage"))
-			.isEqualTo(new TextNode("\"todoTitle\" must not be blank"));
+			.isEqualTo(new StringNode("\"todoTitle\" must not be blank"));
 	}
 
 	@Test
@@ -305,13 +305,13 @@ class TodoApiApplicationTests {
 			.toEntity(JsonNode.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNotNull();
-		assertThat(response.getBody().get("message")).isEqualTo(new TextNode("Validation failed"));
+		assertThat(response.getBody().get("message")).isEqualTo(new StringNode("Validation failed"));
 		assertThat(response.getBody().has("violations")).isTrue();
 		assertThat(response.getBody().get("violations").size()).isEqualTo(2);
 		assertThat(response.getBody().get("violations").get(0).get("defaultMessage")).isEqualTo(
-				new TextNode("The size of \"todoTitle\" must be less than or equal to 255. The given size is 256"));
+				new StringNode("The size of \"todoTitle\" must be less than or equal to 255. The given size is 256"));
 		assertThat(response.getBody().get("violations").get(1).get("defaultMessage"))
-			.isEqualTo(new TextNode("\"finished\" must be one of the following values: [true, false]"));
+			.isEqualTo(new StringNode("\"finished\" must be one of the following values: [true, false]"));
 	}
 
 	@Test
@@ -329,13 +329,13 @@ class TodoApiApplicationTests {
 			.toEntity(JsonNode.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNotNull();
-		assertThat(response.getBody().get("message")).isEqualTo(new TextNode("Validation failed"));
+		assertThat(response.getBody().get("message")).isEqualTo(new StringNode("Validation failed"));
 		assertThat(response.getBody().has("violations")).isTrue();
 		assertThat(response.getBody().get("violations").size()).isEqualTo(2);
 		assertThat(response.getBody().get("violations").get(0).get("defaultMessage"))
-			.isEqualTo(new TextNode("\"todoTitle\" must not be blank"));
+			.isEqualTo(new StringNode("\"todoTitle\" must not be blank"));
 		assertThat(response.getBody().get("violations").get(1).get("defaultMessage"))
-			.isEqualTo(new TextNode("\"finished\" must not be null"));
+			.isEqualTo(new StringNode("\"finished\" must not be null"));
 	}
 
 	@Test
@@ -364,19 +364,19 @@ class TodoApiApplicationTests {
 	void shouldDeleteTodoWithSufficientScope() {
 		String accessToken = this.accessTokenSupplier.apply(Set.of("todo:write", "todo:read"));
 		{
-			ResponseEntity<Todo> response = this.restClient.delete()
+			ResponseEntity<Void> response = this.restClient.delete()
 				.uri("/todos/{todoId}", "00000000-0000-0000-0000-000000000002")
 				.headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
 				.retrieve()
-				.toEntity(Todo.class);
+				.toBodilessEntity();
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 		}
 		{
-			ResponseEntity<Todo> response = this.restClient.get()
+			ResponseEntity<Void> response = this.restClient.get()
 				.uri("/todos/{todoId}", "00000000-0000-0000-0000-000000000002")
 				.headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
 				.retrieve()
-				.toEntity(Todo.class);
+				.toBodilessEntity();
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 		}
 	}

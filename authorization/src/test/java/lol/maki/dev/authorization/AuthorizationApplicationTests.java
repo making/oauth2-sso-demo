@@ -9,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -9,14 +9,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.JsonNode;
 
 final class OAuth2 {
 
