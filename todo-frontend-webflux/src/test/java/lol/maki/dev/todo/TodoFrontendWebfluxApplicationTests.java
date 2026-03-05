@@ -81,7 +81,7 @@ class TodoFrontendWebfluxApplicationTests {
 
 	void login(String username, String password) {
 		page.navigate("http://localhost:52241");
-		assertThat(page.title()).isEqualTo("Login");
+		assertThat(page.title()).isEqualTo("Sign In");
 		page.locator("input[name=username]").fill(username);
 		page.locator("input[name=password]").fill(password);
 		page.locator("button[type=submit]").press("Enter");
@@ -190,7 +190,7 @@ class TodoFrontendWebfluxApplicationTests {
 	@Test
 	void shouldShowErrorMessageAfterFailedLogin() {
 		this.login("test@example.com", "qwerty");
-		assertThat(page.locator("div.error-message").textContent()).isNotEmpty();
+		assertThat(page.locator("div.error-banner").textContent()).isNotEmpty();
 	}
 
 }

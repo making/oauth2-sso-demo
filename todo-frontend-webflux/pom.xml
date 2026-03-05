@@ -179,7 +179,7 @@
         <version>1.15.1</version>
         <configuration>
           <installDirectory>target</installDirectory>
-          <nodeVersion>v22.11.0</nodeVersion>
+          <nodeVersion>v22.16.0</nodeVersion>
         </configuration>
         <executions>
           <execution>
