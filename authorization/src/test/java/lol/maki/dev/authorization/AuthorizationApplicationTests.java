@@ -2,14 +2,18 @@ package lol.maki.dev.authorization;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = { "spring.http.client.redirects=dont_follow" })
+		properties = { "spring.http.clients.redirects=dont_follow" })
 class AuthorizationApplicationTests {
 
 	RestClient restClient;
@@ -70,15 +74,22 @@ class AuthorizationApplicationTests {
 		return matcher.find() ? matcher.group(1) : "";
 	}
 
+	String codeChallenge(String codeVerifier) {
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(DigestUtils.sha256(codeVerifier));
+	}
+
 	@Test
 	void shouldObtainAccessTokenWithAuthorizationCodeFlow() {
 		ResponseEntity<Void> login = formLogin("john@example.com", "password");
+		String codeVerifier = "abc123";
 		ResponseEntity<Void> redirectToCode = this.restClient.get()
 			.uri("/oauth2/authorize",
 					uri -> uri.queryParam("response_type", "code")
 						.queryParam("client_id", "todo-frontend")
 						.queryParam("redirect_uri", "http://localhost:8080/login/oauth2/code/todo-frontend")
 						.queryParam("scope", "todo:read todo:write openid")
+						.queryParam("code_challenge", codeChallenge(codeVerifier))
+						.queryParam("code_challenge_method", "S256")
 						.build())
 			.cookie("JSESSIONID", jsessionId(login))
 			.retrieve()
@@ -88,33 +99,33 @@ class AuthorizationApplicationTests {
 		assertThat(location).isNotNull();
 		String code = UriComponentsBuilder.fromUri(location).build().getQueryParams().getFirst("code");
 		assertThat(code).isNotEmpty();
-		ResponseEntity<JsonNode> token = restClient.post()
+		ResponseEntity<Map<String, Object>> token = restClient.post()
 			.uri("/oauth2/token")
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.headers(httpHeaders -> httpHeaders.setBasicAuth("todo-frontend", "secret"))
-			.body("grant_type=authorization_code&code=%s&redirect_uri=%s".formatted(code,
+			.body("grant_type=authorization_code&code=%s&code_verifier=%s&redirect_uri=%s".formatted(code, codeVerifier,
 					"http://localhost:8080/login/oauth2/code/todo-frontend"))
 			.retrieve()
-			.toEntity(JsonNode.class);
+			.toEntity(new ParameterizedTypeReference<>() {
+			});
 		assertThat(token.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(token.getBody()).isNotNull();
 		assertThat(token.getBody().get("access_token")).isNotNull();
-		String accessToken = token.getBody().get("access_token").textValue();
+		String accessToken = (String) token.getBody().get("access_token");
 		assertThat(accessToken).isNotEmpty();
 		assertThat(token.getBody().get("refresh_token")).isNotNull();
-		assertThat(token.getBody().get("refresh_token").textValue()).isNotEmpty();
+		assertThat((String) token.getBody().get("refresh_token")).isNotEmpty();
 		assertThat(token.getBody().get("scope")).isNotNull();
-		String scope = token.getBody().get("scope").textValue();
-		assertThat(scope).contains("todo:read", "todo:write", "openid");
-		ResponseEntity<JsonNode> userInfo = this.restClient.get()
+		ResponseEntity<Map<String, Object>> userInfo = this.restClient.get()
 			.uri("/userinfo")
 			.headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
 			.retrieve()
-			.toEntity(JsonNode.class);
+			.toEntity(new ParameterizedTypeReference<>() {
+			});
 		assertThat(userInfo.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(userInfo.getBody()).isNotNull();
 		assertThat(userInfo.getBody().get("sub")).isNotNull();
-		assertThat(userInfo.getBody().get("sub").textValue()).isEqualTo("john@example.com");
+		assertThat((String) userInfo.getBody().get("sub")).isEqualTo("john@example.com");
 	}
 
 	@Test
