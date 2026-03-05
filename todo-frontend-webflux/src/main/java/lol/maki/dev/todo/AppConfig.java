@@ -5,10 +5,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
+import org.springframework.web.service.registry.HttpServiceGroup;
 import org.springframework.web.service.registry.ImportHttpServices;
 
 @Configuration(proxyBeanMethods = false)
-@ImportHttpServices(group = "todo", types = TodoClient.class)
+@ImportHttpServices(group = "todo", types = TodoClient.class, clientType = HttpServiceGroup.ClientType.WEB_CLIENT)
 public class AppConfig {
 
 	@Bean
