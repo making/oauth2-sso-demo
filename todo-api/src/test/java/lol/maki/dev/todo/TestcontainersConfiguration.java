@@ -27,7 +27,7 @@ class TestcontainersConfiguration {
 					"todo-frontend")
 			.withEnv("spring.security.oauth2.authorizationserver.client.todo-frontend.registration.client-secret",
 					"{noop}secret")
-			.withEnv("management.zipkin.tracing.export.enabled", "false")
+			.withEnv("management.tracing.export.zipkin.enabled", "false")
 			.withEnv("spring.main.banner-mode", "off")
 			.withExposedPorts(9000)
 			.waitingFor(Wait.forHttp("/actuator/health").forPort(9000).withStartupTimeout(Duration.ofSeconds(10)))
