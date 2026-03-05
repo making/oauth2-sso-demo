@@ -147,7 +147,7 @@ const TodoList = () => {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': userData.csrfToken,
                 },
-                body: JSON.stringify({ finished: !todo.finished }),
+                body: JSON.stringify({ todoTitle: todo.todoTitle, finished: !todo.finished }),
             });
 
             if (!response.ok) {
