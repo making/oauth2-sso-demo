@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = { "logging.level.org.springframework.web.client.RestTemplate=info",
-				"spring.http.client.redirects=dont_follow" })
+				"spring.http.clients.redirects=dont_follow" })
 @Import({ TestcontainersConfiguration.class, MockConfig.class })
 @Testcontainers(disabledWithoutDocker = true)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
