@@ -45,10 +45,12 @@ public class SecurityConfig {
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers(EndpointRequest.toAnyEndpoint())
 			.permitAll()
-			.requestMatchers("/login", "/error")
+			.requestMatchers("/css/**", "/login", "/error")
 			.permitAll()
 			.anyRequest()
-			.authenticated()).formLogin(form -> form.loginPage("/login"));
+			.authenticated())
+			.formLogin(form -> form.loginPage("/login"))
+			.logout(logout -> logout.logoutSuccessUrl("/login"));
 		return http.build();
 	}
 

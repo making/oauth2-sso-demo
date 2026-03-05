@@ -78,6 +78,18 @@ class AuthorizationApplicationTests {
 	}
 
 	@Test
+	void shouldShowIndexPageAfterLogin() {
+		ResponseEntity<Void> login = formLogin("john@example.com", "password");
+		ResponseEntity<String> indexPage = this.restClient.get()
+			.uri("/")
+			.cookie("JSESSIONID", jsessionId(login))
+			.retrieve()
+			.toEntity(String.class);
+		assertThat(indexPage.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(indexPage.getBody()).contains("john@example.com");
+	}
+
+	@Test
 	void shouldObtainAccessTokenWithAuthorizationCodeFlow() {
 		ResponseEntity<Void> login = formLogin("john@example.com", "password");
 		String codeVerifier = "abc123";
@@ -140,7 +152,7 @@ class AuthorizationApplicationTests {
 			.body("username=%s&password=%s&_csrf=%s".formatted(username, password, csrfToken(loginForm)))
 			.cookie("JSESSIONID", jsessionId)
 			.retrieve()
-			.toEntity(Void.class);
+			.toBodilessEntity();
 		URI location = login.getHeaders().getLocation();
 		assertThat(location).isNotNull();
 		assertThat(location.toString()).endsWith("?error");
@@ -151,8 +163,40 @@ class AuthorizationApplicationTests {
 			.toEntity(String.class);
 		assertThat(loginFailed.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(loginFailed.getBody()).containsIgnoringNewLines("""
-				<div class="error-message">
+				<div class="error-banner">
 				""");
+	}
+
+	@Test
+	void shouldLogout() {
+		ResponseEntity<Void> login = formLogin("john@example.com", "password");
+		String jsessionId = jsessionId(login);
+		// GET /logout should show the confirmation page
+		ResponseEntity<String> logoutPage = this.restClient.get()
+			.uri("/logout")
+			.cookie("JSESSIONID", jsessionId)
+			.retrieve()
+			.toEntity(String.class);
+		assertThat(logoutPage.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(logoutPage.getBody()).contains("Sign out");
+		// POST /logout should perform the actual logout
+		ResponseEntity<Void> logout = this.restClient.post()
+			.uri("/logout")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("_csrf=%s".formatted(csrfToken(logoutPage)))
+			.cookie("JSESSIONID", jsessionId)
+			.retrieve()
+			.toBodilessEntity();
+		assertThat(logout.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+		assertThat(logout.getHeaders().getLocation()).hasPath("/login");
+		// Accessing / after logout should redirect to login
+		ResponseEntity<Void> afterLogout = this.restClient.get()
+			.uri("/")
+			.cookie("JSESSIONID", jsessionId)
+			.retrieve()
+			.toBodilessEntity();
+		assertThat(afterLogout.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+		assertThat(afterLogout.getHeaders().getLocation()).hasPath("/login");
 	}
 
 }

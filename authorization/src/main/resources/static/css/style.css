@@ -1,0 +1,196 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0e0e10;
+    color: #e0e0e0;
+    padding: 2rem 1.5rem;
+    position: relative;
+}
+
+/* Subtle grid background */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+.container {
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+    z-index: 1;
+}
+
+.title {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 3rem;
+    font-weight: 700;
+    font-style: italic;
+    color: #f0ead6;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+}
+
+.subtitle {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+}
+
+/* Error */
+.error-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 2rem;
+}
+
+.error-banner svg {
+    width: 16px;
+    height: 16px;
+    color: #f87171;
+    flex-shrink: 0;
+}
+
+.error-banner span {
+    font-size: 0.8125rem;
+    color: #fca5a5;
+}
+
+/* Form */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.field label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.field input {
+    width: 100%;
+    height: 56px;
+    padding: 0 1.25rem;
+    font-size: 1.0625rem;
+    font-family: inherit;
+    color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.field input:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.field input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.btn {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0e0e10;
+    background: #d4e157;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 0.5rem;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: #c6d343;
+}
+
+.btn:focus-visible {
+    outline: 2px solid #d4e157;
+    outline-offset: 2px;
+}
+
+.btn:active {
+    background: #b8c534;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-secondary:focus-visible {
+    outline-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:active {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* User info */
+.user-info {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.625rem;
+}
+
+.username {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #f0ead6;
+    letter-spacing: -0.01em;
+}
