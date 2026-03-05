@@ -1,6 +1,6 @@
 package lol.maki.dev.todo;
 
-import java.time.Clock;
+import java.time.InstantSource;
 
 import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 
@@ -14,8 +14,8 @@ import org.springframework.util.JdkIdGenerator;
 public class AppConfig {
 
 	@Bean
-	public Clock clock() {
-		return Clock.systemUTC();
+	public InstantSource instantSource() {
+		return InstantSource.system();
 	}
 
 	@Bean

@@ -1,7 +1,7 @@
 package lol.maki.dev.todo;
 
-import java.time.Clock;
 import java.time.Instant;
+import java.time.InstantSource;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -15,12 +15,12 @@ public class TodoService {
 
 	private final IdGenerator idGenerator;
 
-	private final Clock clock;
+	private final InstantSource instantSource;
 
-	public TodoService(TodoRepository todoRepository, IdGenerator idGenerator, Clock clock) {
+	public TodoService(TodoRepository todoRepository, IdGenerator idGenerator, InstantSource instantSource) {
 		this.todoRepository = todoRepository;
 		this.idGenerator = idGenerator;
-		this.clock = clock;
+		this.instantSource = instantSource;
 	}
 
 	public List<Todo> getTodos() {
@@ -32,7 +32,7 @@ public class TodoService {
 	}
 
 	public Todo create(String todoTitle, String email) {
-		Instant now = this.clock.instant();
+		Instant now = this.instantSource.instant();
 		Todo todo = TodoBuilder.todo()
 			.todoId(this.idGenerator.generateId())
 			.todoTitle(todoTitle)
@@ -60,7 +60,7 @@ public class TodoService {
 			}
 			if (touched) {
 				builder.updatedBy(username);
-				builder.updatedAt(this.clock.instant());
+				builder.updatedAt(this.instantSource.instant());
 			}
 			return builder.build();
 		}).map(this.todoRepository::save).orElseThrow(() -> new NotFoundException(todoId));

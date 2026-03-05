@@ -1,8 +1,7 @@
 package lol.maki.dev.todo;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.InstantSource;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.boot.test.context.TestConfiguration;
@@ -22,26 +21,10 @@ public class MockConfig {
 
 	@Bean
 	@Primary
-	public Clock incrementalClock() {
+	public InstantSource incrementalInstantSource() {
 		Instant base = Instant.parse("2024-11-01T00:00:00Z");
 		AtomicInteger counter = new AtomicInteger(0);
-		return new Clock() {
-
-			@Override
-			public ZoneId getZone() {
-				return ZoneId.of("UTC");
-			}
-
-			@Override
-			public Clock withZone(ZoneId zone) {
-				return this; // ignore
-			}
-
-			@Override
-			public Instant instant() {
-				return base.plusSeconds(counter.getAndIncrement());
-			}
-		};
+		return () -> base.plusSeconds(counter.getAndIncrement());
 	}
 
 }
