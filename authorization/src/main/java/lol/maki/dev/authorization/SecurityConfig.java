@@ -25,10 +25,6 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
-	/**
-	 * See <a href=
-	 * "https://docs.spring.io/spring-authorization-server/reference/getting-started.html#defining-required-components">Reference</a>
-	 */
 	@Bean
 	@Order(1)
 	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
