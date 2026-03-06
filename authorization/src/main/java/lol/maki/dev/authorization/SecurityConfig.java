@@ -13,14 +13,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+
+import javax.sql.DataSource;
 
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
@@ -76,6 +82,18 @@ public class SecurityConfig {
 			String name = context.getPrincipal().getName();
 			claims.claim("email", name); // use username as 'email' claim
 		};
+	}
+
+	@Bean
+	public JdbcOAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate,
+			RegisteredClientRepository registeredClientRepository) {
+		return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
+	}
+
+	@Bean
+	public JdbcOAuth2AuthorizationConsentService authorizationConsentService(JdbcTemplate jdbcTemplate,
+			RegisteredClientRepository registeredClientRepository) {
+		return new JdbcOAuth2AuthorizationConsentService(jdbcTemplate, registeredClientRepository);
 	}
 
 }
