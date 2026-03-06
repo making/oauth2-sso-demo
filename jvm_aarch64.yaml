@@ -1,8 +1,8 @@
-image: ghcr.io/making/oauth2-sso-demo/authorization@sha256:1ec0e448c934884fe2262f7ec01f4e494344f32a73245cd5b4e1050797e80756
-git_revision: f41d3d6d4fe43d26474720cad5de29a27cf4c1c6
+image: ghcr.io/making/oauth2-sso-demo/authorization@sha256:e428106da654b4cbc3ddedaf943bde3e2ff4e8bb3e7bfc71a2f956951d96f19a
+git_revision: fcbb82e926cd60a8e57a011b8eebe7a586120ce7
 deployment:
   image:
     repository: ghcr.io/making/oauth2-sso-demo/authorization
-    digest: sha256:1ec0e448c934884fe2262f7ec01f4e494344f32a73245cd5b4e1050797e80756
+    digest: sha256:e428106da654b4cbc3ddedaf943bde3e2ff4e8bb3e7bfc71a2f956951d96f19a
   podLabels:
-    github.com/revision: f41d3d6d4fe43d26474720cad5de29a27cf4c1c6
+    github.com/revision: fcbb82e926cd60a8e57a011b8eebe7a586120ce7
