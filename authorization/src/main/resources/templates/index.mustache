@@ -17,7 +17,22 @@
         <p class="username">{{username}}</p>
     </div>
 
-    <a href="/logout" class="btn">Sign Out</a>
+    <p class="user-info" style="margin-bottom: 1.5rem;">Applications</p>
+    <div class="app-list">
+        {{#clients}}
+        <a href="{{url}}" target="_blank" rel="noopener noreferrer" class="app-card">
+            <span class="app-name">{{clientName}}</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+        {{/clients}}
+    </div>
+    {{^clients}}
+    <p class="no-clients">No applications registered.</p>
+    {{/clients}}
+
+    <a href="/logout" class="btn" style="margin-top: 3rem;">Sign Out</a>
 </div>
 
 </body>

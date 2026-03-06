@@ -8,7 +8,10 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import java.util.List;
+
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
+import org.springframework.boot.security.oauth2.server.authorization.autoconfigure.servlet.OAuth2AuthorizationServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -19,6 +22,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -26,9 +30,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
-import javax.sql.DataSource;
-
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(OAuth2AuthorizationServerProperties.class)
 public class SecurityConfig {
 
 	@Bean
@@ -83,6 +86,11 @@ public class SecurityConfig {
 			String name = context.getPrincipal().getName();
 			claims.claim("email", name); // use username as 'email' claim
 		};
+	}
+
+	@Bean
+	public JdbcRegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
+		return new JdbcRegisteredClientRepository(jdbcTemplate);
 	}
 
 	@Bean

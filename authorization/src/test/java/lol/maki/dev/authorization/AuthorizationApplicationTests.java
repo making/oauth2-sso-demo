@@ -99,6 +99,8 @@ class AuthorizationApplicationTests {
 			.toEntity(String.class);
 		assertThat(indexPage.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(indexPage.getBody()).contains("john@example.com");
+		assertThat(indexPage.getBody()).contains("Dex Example App");
+		assertThat(indexPage.getBody()).contains("Todo List");
 	}
 
 	@Test
