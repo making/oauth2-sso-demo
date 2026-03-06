@@ -1,6 +1,7 @@
 package lol.maki.dev.authorization;
 
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
@@ -12,7 +13,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuthorizationApplicationTests {
 
 	RestClient restClient;
+
+	@TempDir
+	static Path tempDir;
+
+	@DynamicPropertySource
+	static void registerProperties(DynamicPropertyRegistry registry) {
+		registry.add("spring.datasource.url", () -> "jdbc:sqlite:" + tempDir.resolve("test.db").toAbsolutePath());
+	}
 
 	@BeforeEach
 	void setUp(@LocalServerPort int port, @Autowired RestClient.Builder builder,
