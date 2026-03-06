@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consent required</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script>
+        function cancelConsent() {
+            document.consent_form.reset();
+            document.consent_form.submit();
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="title">Consent</h1>
+    <p class="subtitle">Permission request</p>
+
+    <p class="consent-description">
+        <span class="highlight">{{clientName}}</span> wants to access your account
+        <span class="principal">{{principalName}}</span>
+    </p>
+
+    <form name="consent_form" method="post" action="/oauth2/authorize">
+        <input type="hidden" name="client_id" value="{{clientId}}">
+        <input type="hidden" name="state" value="{{state}}">
+
+        <div class="scope-list">
+            {{#scopes}}
+                <div class="scope-item">
+                    <input type="checkbox" name="scope" value="{{.}}" id="scope-{{.}}">
+                    <label for="scope-{{.}}">{{.}}</label>
+                </div>
+            {{/scopes}}
+        </div>
+
+        <div class="consent-actions">
+            <button class="btn" type="submit" id="submit-consent">Approve</button>
+            <button class="btn btn-secondary" type="button" onclick="cancelConsent();" id="cancel-consent">Deny</button>
+        </div>
+    </form>
+
+    <p class="consent-footer">
+        Your consent to provide access is required.
+        If you do not approve, click Deny, in which case no information will be shared with the app.
+    </p>
+</div>
+
+</body>
+</html>

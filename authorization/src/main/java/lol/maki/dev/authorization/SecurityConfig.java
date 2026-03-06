@@ -36,7 +36,8 @@ public class SecurityConfig {
 	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 		return http.oauth2AuthorizationServer((authorizationServer) -> {
 			http.securityMatcher(authorizationServer.getEndpointsMatcher());
-			authorizationServer.oidc(Customizer.withDefaults());
+			authorizationServer.authorizationEndpoint(endpoint -> endpoint.consentPage("/oauth2/consent"))
+				.oidc(Customizer.withDefaults());
 		})
 			.authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
 			// Redirect to the login page when not authenticated from the

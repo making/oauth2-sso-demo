@@ -220,3 +220,84 @@ body::before {
     color: rgba(255, 255, 255, 0.5);
     line-height: 1.6;
 }
+
+/* Consent page */
+.consent-description {
+    font-size: 0.9375rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+}
+
+.consent-description .highlight {
+    color: #d4e157;
+    font-weight: 600;
+}
+
+.consent-description .principal {
+    color: #f0ead6;
+    font-weight: 600;
+}
+
+.scope-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+}
+
+.scope-item {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.scope-item:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.scope-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.scope-item input[type="checkbox"]:checked {
+    background: #d4e157;
+    border-color: #d4e157;
+}
+
+.scope-item label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #e0e0e0;
+    cursor: pointer;
+    flex: 1;
+}
+
+.consent-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.consent-footer {
+    margin-top: 2.5rem;
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.3);
+    line-height: 1.6;
+}
