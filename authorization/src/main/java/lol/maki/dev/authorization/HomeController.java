@@ -19,7 +19,7 @@ public class HomeController {
 
 	@GetMapping(path = "/")
 	public String index(Principal principal, Model model) {
-		List<Client> client = this.jdbcClient.sql("""
+		List<Client> clients = this.jdbcClient.sql("""
 				SELECT
 				    client_id,
 				    client_name,
@@ -30,7 +30,7 @@ public class HomeController {
 				    authorization_grant_types LIKE '%authorization_code%'
 				AND post_logout_redirect_uris IS NOT NULL""").query(Client.class).list();
 		model.addAttribute("username", principal.getName());
-		model.addAttribute("clients", client);
+		model.addAttribute("clients", clients);
 		return "index";
 	}
 
