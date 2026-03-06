@@ -80,6 +80,12 @@
 		<dependency>
 			<groupId>net.ttddyy.observation</groupId>
 			<artifactId>datasource-micrometer-opentelemetry</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.openjdk.jmh</groupId>
+					<artifactId>jmh-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.ttddyy.observation</groupId>
