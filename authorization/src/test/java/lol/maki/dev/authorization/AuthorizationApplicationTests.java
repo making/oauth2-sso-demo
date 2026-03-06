@@ -65,16 +65,16 @@ class AuthorizationApplicationTests {
 			.uri("/login")
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.body("username=%s&password=%s&_csrf=%s".formatted(username, password, csrfToken(loginForm)))
-			.cookie("JSESSIONID", jsessionId(loginForm))
+			.cookie("SESSION", sessionId(loginForm))
 			.retrieve()
 			.toEntity(Void.class);
 		assertThat(login.getStatusCode()).isEqualTo(HttpStatus.FOUND);
 		return login;
 	}
 
-	String jsessionId(ResponseEntity<?> response) {
+	String sessionId(ResponseEntity<?> response) {
 		return Arrays.stream(Objects.requireNonNull(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).split("; "))
-			.filter(x -> x.startsWith("JSESSIONID="))
+			.filter(x -> x.startsWith("SESSION="))
 			.collect(Collectors.joining())
 			.split("=")[1];
 	}
@@ -94,7 +94,7 @@ class AuthorizationApplicationTests {
 		ResponseEntity<Void> login = formLogin("john@example.com", "password");
 		ResponseEntity<String> indexPage = this.restClient.get()
 			.uri("/")
-			.cookie("JSESSIONID", jsessionId(login))
+			.cookie("SESSION", sessionId(login))
 			.retrieve()
 			.toEntity(String.class);
 		assertThat(indexPage.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -116,7 +116,7 @@ class AuthorizationApplicationTests {
 						.queryParam("code_challenge", codeChallenge(codeVerifier))
 						.queryParam("code_challenge_method", "S256")
 						.build())
-			.cookie("JSESSIONID", jsessionId(login))
+			.cookie("SESSION", sessionId(login))
 			.retrieve()
 			.toEntity(Void.class);
 		assertThat(redirectToCode.getStatusCode()).isEqualTo(HttpStatus.FOUND);
@@ -159,12 +159,12 @@ class AuthorizationApplicationTests {
 		String password = "qwerty";
 		ResponseEntity<String> loginForm = this.restClient.get().uri("/login").retrieve().toEntity(String.class);
 		assertThat(loginForm.getStatusCode()).isEqualTo(HttpStatus.OK);
-		String jsessionId = jsessionId(loginForm);
+		String sessionId = sessionId(loginForm);
 		ResponseEntity<Void> login = this.restClient.post()
 			.uri("/login")
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.body("username=%s&password=%s&_csrf=%s".formatted(username, password, csrfToken(loginForm)))
-			.cookie("JSESSIONID", jsessionId)
+			.cookie("SESSION", sessionId)
 			.retrieve()
 			.toBodilessEntity();
 		URI location = login.getHeaders().getLocation();
@@ -172,7 +172,7 @@ class AuthorizationApplicationTests {
 		assertThat(location.toString()).endsWith("?error");
 		ResponseEntity<String> loginFailed = this.restClient.get()
 			.uri(location)
-			.cookie("JSESSIONID", jsessionId)
+			.cookie("SESSION", sessionId)
 			.retrieve()
 			.toEntity(String.class);
 		assertThat(loginFailed.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -184,11 +184,11 @@ class AuthorizationApplicationTests {
 	@Test
 	void shouldLogout() {
 		ResponseEntity<Void> login = formLogin("john@example.com", "password");
-		String jsessionId = jsessionId(login);
+		String sessionId = sessionId(login);
 		// GET /logout should show the confirmation page
 		ResponseEntity<String> logoutPage = this.restClient.get()
 			.uri("/logout")
-			.cookie("JSESSIONID", jsessionId)
+			.cookie("SESSION", sessionId)
 			.retrieve()
 			.toEntity(String.class);
 		assertThat(logoutPage.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -198,7 +198,7 @@ class AuthorizationApplicationTests {
 			.uri("/logout")
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.body("_csrf=%s".formatted(csrfToken(logoutPage)))
-			.cookie("JSESSIONID", jsessionId)
+			.cookie("SESSION", sessionId)
 			.retrieve()
 			.toBodilessEntity();
 		assertThat(logout.getStatusCode()).isEqualTo(HttpStatus.FOUND);
@@ -206,7 +206,7 @@ class AuthorizationApplicationTests {
 		// Accessing / after logout should redirect to login
 		ResponseEntity<Void> afterLogout = this.restClient.get()
 			.uri("/")
-			.cookie("JSESSIONID", jsessionId)
+			.cookie("SESSION", sessionId)
 			.retrieve()
 			.toBodilessEntity();
 		assertThat(afterLogout.getStatusCode()).isEqualTo(HttpStatus.FOUND);
