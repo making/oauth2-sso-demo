@@ -34,7 +34,7 @@ class RegisteredClientPopulator implements InitializingBean {
 	}
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		List<RegisteredClient> registeredClients = this.propertiesMapper.asRegisteredClients();
 		registeredClients.forEach(this.registeredClientRepository::save);
 	}
