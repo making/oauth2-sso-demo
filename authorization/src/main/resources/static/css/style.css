@@ -194,3 +194,29 @@ body::before {
     color: #f0ead6;
     letter-spacing: -0.01em;
 }
+
+/* Error page */
+.error-code {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 6rem;
+    font-weight: 700;
+    font-style: italic;
+    color: rgba(212, 225, 87, 0.15);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+}
+
+.error-detail {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.error-detail p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+}
