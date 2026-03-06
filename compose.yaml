@@ -1,9 +1,12 @@
 services:
   zipkin:
-    image: 'ghcr.io/openzipkin-contrib/zipkin-otel:0.1'
+    image: 'ghcr.io/openzipkin-contrib/zipkin-otel:latest'
     ports:
-    - '9411:9411'
+    - '9411:4318'
+    - '4317' # dummy
     environment:
       UI_ENABLED: 'true'
+      QUERY_PORT: '4318'
     labels:
-      org.springframework.boot.service-connection: 'zipkin'
+      org.springframework.boot.service-connection: 'otel/opentelemetry-collector-contrib'
+      org.springframework.boot.readiness-check.tcp.disable: true
