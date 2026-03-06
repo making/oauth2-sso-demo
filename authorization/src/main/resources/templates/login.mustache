@@ -12,6 +12,12 @@
     <h1 class="title">Sign in</h1>
     <p class="subtitle">Use your organization credentials</p>
 
+    {{#springMacroRequestContext.request.parameterMap.signup}}
+        <div class="success-banner" style="display:flex;align-items:center;gap:0.5rem;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);border-radius:8px;padding:0.75rem 1rem;margin-bottom:2rem;">
+            <span style="font-size:0.8125rem;color:#86efac;">Account created successfully. Please sign in.</span>
+        </div>
+    {{/springMacroRequestContext.request.parameterMap.signup}}
+
     {{#springMacroRequestContext.request.parameterMap.error}}
         <div class="error-banner">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -32,6 +38,7 @@
                     id="username"
                     name="username"
                     autocomplete="username"
+                    placeholder="you@example.com"
                     required
             >
         </div>
@@ -53,6 +60,8 @@
 
         <button type="submit" class="btn">Continue</button>
     </form>
+
+    <p class="consent-footer">Don't have an account? <a href="/signup" style="color: #d4e157;">Sign up</a></p>
 </div>
 
 </body>

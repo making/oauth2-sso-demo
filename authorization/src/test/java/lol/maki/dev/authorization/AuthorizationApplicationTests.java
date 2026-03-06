@@ -67,7 +67,7 @@ class AuthorizationApplicationTests {
 			.body("username=%s&password=%s&_csrf=%s".formatted(username, password, csrfToken(loginForm)))
 			.cookie("SESSION", sessionId(loginForm))
 			.retrieve()
-			.toEntity(Void.class);
+			.toBodilessEntity();
 		assertThat(login.getStatusCode()).isEqualTo(HttpStatus.FOUND);
 		return login;
 	}
@@ -118,7 +118,7 @@ class AuthorizationApplicationTests {
 						.build())
 			.cookie("SESSION", sessionId(login))
 			.retrieve()
-			.toEntity(Void.class);
+			.toBodilessEntity();
 		assertThat(redirectToCode.getStatusCode()).isEqualTo(HttpStatus.FOUND);
 		URI location = redirectToCode.getHeaders().getLocation();
 		assertThat(location).isNotNull();
@@ -179,6 +179,97 @@ class AuthorizationApplicationTests {
 		assertThat(loginFailed.getBody()).containsIgnoringNewLines("""
 				<div class="error-banner">
 				""");
+	}
+
+	ResponseEntity<String> getSignupForm() {
+		ResponseEntity<String> signupForm = this.restClient.get().uri("/signup").retrieve().toEntity(String.class);
+		assertThat(signupForm.getStatusCode()).isEqualTo(HttpStatus.OK);
+		return signupForm;
+	}
+
+	ResponseEntity<Void> postSignup(String username, String password, String confirmPassword,
+			ResponseEntity<String> signupForm) {
+		return this.restClient.post()
+			.uri("/signup")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("username=%s&password=%s&confirmPassword=%s&_csrf=%s".formatted(username, password, confirmPassword,
+					csrfToken(signupForm)))
+			.cookie("SESSION", sessionId(signupForm))
+			.retrieve()
+			.toBodilessEntity();
+	}
+
+	@Test
+	void shouldSignupAndLogin() {
+		ResponseEntity<String> signupForm = getSignupForm();
+		ResponseEntity<Void> signup = postSignup("newuser@example.com", "newpassword", "newpassword", signupForm);
+		assertThat(signup.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+		assertThat(signup.getHeaders().getLocation()).hasPath("/login");
+		assertThat(signup.getHeaders().getLocation().getQuery()).isEqualTo("signup");
+		// Verify the user can log in
+		ResponseEntity<Void> login = formLogin("newuser@example.com", "newpassword");
+		assertThat(login.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+	}
+
+	@Test
+	void shouldFailSignupWithMismatchedPasswords() {
+		ResponseEntity<String> signupForm = getSignupForm();
+		ResponseEntity<String> signupResult = this.restClient.post()
+			.uri("/signup")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("username=%s&password=%s&confirmPassword=%s&_csrf=%s".formatted("mismatch@example.com", "password1",
+					"password2", csrfToken(signupForm)))
+			.cookie("SESSION", sessionId(signupForm))
+			.retrieve()
+			.toEntity(String.class);
+		assertThat(signupResult.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(signupResult.getBody()).contains("Passwords do not match");
+	}
+
+	@Test
+	void shouldFailSignupWithDuplicateUsername() {
+		// john@example.com is created by UserPopulator
+		ResponseEntity<String> signupForm = getSignupForm();
+		ResponseEntity<String> signupResult = this.restClient.post()
+			.uri("/signup")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("username=%s&password=%s&confirmPassword=%s&_csrf=%s".formatted("john@example.com", "password",
+					"password", csrfToken(signupForm)))
+			.cookie("SESSION", sessionId(signupForm))
+			.retrieve()
+			.toEntity(String.class);
+		assertThat(signupResult.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(signupResult.getBody()).contains("Username already exists");
+	}
+
+	@Test
+	void shouldFailSignupWithInvalidEmail() {
+		ResponseEntity<String> signupForm = getSignupForm();
+		ResponseEntity<String> signupResult = this.restClient.post()
+			.uri("/signup")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("username=%s&password=%s&confirmPassword=%s&_csrf=%s".formatted("notanemail", "password", "password",
+					csrfToken(signupForm)))
+			.cookie("SESSION", sessionId(signupForm))
+			.retrieve()
+			.toEntity(String.class);
+		assertThat(signupResult.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(signupResult.getBody()).contains("Please enter a valid email address");
+	}
+
+	@Test
+	void shouldFailSignupWithEmptyFields() {
+		ResponseEntity<String> signupForm = getSignupForm();
+		ResponseEntity<String> signupResult = this.restClient.post()
+			.uri("/signup")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("username=&password=&confirmPassword=&_csrf=%s".formatted(csrfToken(signupForm)))
+			.cookie("SESSION", sessionId(signupForm))
+			.retrieve()
+			.toEntity(String.class);
+		assertThat(signupResult.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(signupResult.getBody()).contains("Username is required");
+		assertThat(signupResult.getBody()).contains("Password is required");
 	}
 
 	@Test

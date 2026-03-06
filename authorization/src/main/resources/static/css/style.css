@@ -98,6 +98,12 @@ body::before {
     text-transform: uppercase;
 }
 
+.field-error {
+    font-size: 0.8125rem;
+    color: #fca5a5;
+    margin-top: -0.25rem;
+}
+
 .field input {
     width: 100%;
     height: 56px;
