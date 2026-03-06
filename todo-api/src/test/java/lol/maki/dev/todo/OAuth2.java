@@ -27,9 +27,9 @@ final class OAuth2 {
 
 	static String formLogin(URI loginUrl, RestClient restClient, User user) {
 		ResponseEntity<String> loginForm = restClient.get().uri(loginUrl).retrieve().toEntity(String.class);
-		String jsessionId = Arrays
+		String sessionId = Arrays
 			.stream(Objects.requireNonNull(loginForm.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).split("; "))
-			.filter(x -> x.startsWith("JSESSIONID="))
+			.filter(x -> x.startsWith("SESSION="))
 			.collect(Collectors.joining())
 			.split("=")[1];
 		Matcher matcher = Pattern.compile("name=\"_csrf\" value=\"([^\"]+)\"")
@@ -39,11 +39,11 @@ final class OAuth2 {
 			.uri(loginUrl)
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.body("username=%s&password=%s&_csrf=%s".formatted(user.username(), user.password(), csrfToken))
-			.cookie("JSESSIONID", jsessionId)
+			.cookie("SESSION", sessionId)
 			.retrieve()
 			.toEntity(String.class);
 		return Arrays.stream(Objects.requireNonNull(login.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).split("; "))
-			.filter(x -> x.startsWith("JSESSIONID="))
+			.filter(x -> x.startsWith("SESSION="))
 			.collect(Collectors.joining())
 			.split("=")[1];
 	}
@@ -54,7 +54,7 @@ final class OAuth2 {
 
 	static String authorizationCodeFlow(URI issuerUrl, RestClient restClient, User user, Client client, URI redirectUri,
 			Set<String> scopes) {
-		String jsessionId = formLogin(URI.create(issuerUrl + "/login"), restClient, user);
+		String sessionId = formLogin(URI.create(issuerUrl + "/login"), restClient, user);
 		JsonNode openIdConfiguration = Objects.requireNonNull(
 				restClient.get().uri(issuerUrl + "/.well-known/openid-configuration").retrieve().body(JsonNode.class));
 		String tokenEndpoint = openIdConfiguration.get("token_endpoint").asText();
@@ -69,7 +69,7 @@ final class OAuth2 {
 						.queryParam("code_challenge", codeChallenge(codeVerifier))
 						.queryParam("code_challenge_method", "S256")
 						.build())
-			.cookie("JSESSIONID", jsessionId)
+			.cookie("SESSION", sessionId)
 			.retrieve()
 			.toEntity(String.class);
 		String code = UriComponentsBuilder.fromUri(Objects.requireNonNull(redirectToCode.getHeaders().getLocation()))
