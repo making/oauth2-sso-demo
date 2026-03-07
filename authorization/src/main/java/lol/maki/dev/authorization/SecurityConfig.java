@@ -22,7 +22,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,12 +36,23 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.security.web.webauthn.management.JdbcPublicKeyCredentialUserEntityRepository;
+import org.springframework.security.web.webauthn.management.JdbcUserCredentialRepository;
+import org.springframework.security.web.webauthn.management.PublicKeyCredentialUserEntityRepository;
+import org.springframework.security.web.webauthn.management.UserCredentialRepository;
 
 import javax.sql.DataSource;
 
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({ OAuth2AuthorizationServerProperties.class, SecurityProperties.class })
+@EnableConfigurationProperties({ OAuth2AuthorizationServerProperties.class, SecurityProperties.class,
+		WebAuthnProps.class })
 public class SecurityConfig {
+
+	private final WebAuthnProps webAuthnProps;
+
+	public SecurityConfig(WebAuthnProps webAuthnProps) {
+		this.webAuthnProps = webAuthnProps;
+	}
 
 	@Bean
 	@Order(1)
@@ -65,12 +75,16 @@ public class SecurityConfig {
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers(EndpointRequest.toAnyEndpoint())
 			.permitAll()
-			.requestMatchers("/css/**", "/login", "/signup", "/error")
+			.requestMatchers("/css/**", "/js/**", "/login", "/signup", "/error")
 			.permitAll()
 			.anyRequest()
 			.authenticated())
 			.formLogin(form -> form.loginPage("/login"))
-			.logout(logout -> logout.logoutSuccessUrl("/login"));
+			.logout(logout -> logout.logoutSuccessUrl("/login"))
+			.webAuthn(webauthn -> webauthn.rpName(this.webAuthnProps.rpName())
+				.rpId(this.webAuthnProps.rpId())
+				.allowedOrigins(this.webAuthnProps.allowedOrigins())
+				.disableDefaultRegistrationPage(true));
 		return http.build();
 	}
 
@@ -103,13 +117,13 @@ public class SecurityConfig {
 		return new JdbcRegisteredClientRepository(jdbcTemplate);
 	}
 
-	@Bean
+	// @Bean // doesn't work with Passkey
 	public JdbcOAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate,
 			RegisteredClientRepository registeredClientRepository) {
 		return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
 	}
 
-	@Bean
+	// @Bean // doesn't work with Passkey
 	public JdbcOAuth2AuthorizationConsentService authorizationConsentService(JdbcTemplate jdbcTemplate,
 			RegisteredClientRepository registeredClientRepository) {
 		return new JdbcOAuth2AuthorizationConsentService(jdbcTemplate, registeredClientRepository);
@@ -118,6 +132,16 @@ public class SecurityConfig {
 	@Bean
 	public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource) {
 		return new JdbcUserDetailsManager(dataSource);
+	}
+
+	@Bean
+	public UserCredentialRepository userCredentialRepository(JdbcTemplate jdbcTemplate) {
+		return new JdbcUserCredentialRepository(jdbcTemplate);
+	}
+
+	@Bean
+	public PublicKeyCredentialUserEntityRepository publicKeyCredentialUserEntityRepository(JdbcTemplate jdbcTemplate) {
+		return new JdbcPublicKeyCredentialUserEntityRepository(jdbcTemplate);
 	}
 
 	@SuppressWarnings("deprecation")
