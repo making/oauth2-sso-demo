@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import lol.maki.dev.todo.TodoBuilder;
+import lol.maki.dev.todo.todo.Todo.TodoBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.IdGenerator;
 
@@ -35,7 +35,7 @@ public class TodoService {
 
 	public Todo create(String todoTitle, String email) {
 		Instant now = this.instantSource.instant();
-		Todo todo = TodoBuilder.todo()
+		Todo todo = Todo.builder()
 			.todoId(this.idGenerator.generateId())
 			.todoTitle(todoTitle)
 			.finished(false)
@@ -50,7 +50,7 @@ public class TodoService {
 
 	public Todo update(UUID todoId, String todoTitle, boolean finished, String username) {
 		return this.todoRepository.findById(todoId).map(t -> {
-			TodoBuilder builder = TodoBuilder.from(t);
+			TodoBuilder builder = t.toBuilder();
 			boolean touched = false;
 			if (todoTitle != null) {
 				builder.todoTitle(todoTitle);
