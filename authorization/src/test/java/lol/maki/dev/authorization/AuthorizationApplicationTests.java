@@ -69,6 +69,7 @@ class AuthorizationApplicationTests {
 			.retrieve()
 			.toBodilessEntity();
 		assertThat(login.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+		assertThat(login.getHeaders().getLocation()).hasPath("/");
 		return login;
 	}
 
@@ -207,8 +208,7 @@ class AuthorizationApplicationTests {
 		assertThat(signup.getHeaders().getLocation()).hasPath("/login");
 		assertThat(signup.getHeaders().getLocation().getQuery()).isEqualTo("signup");
 		// Verify the user can log in
-		ResponseEntity<Void> login = formLogin("newuser@example.com", "newpassword");
-		assertThat(login.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+		formLogin("newuser@example.com", "newpassword");
 	}
 
 	@Test
@@ -270,6 +270,90 @@ class AuthorizationApplicationTests {
 		assertThat(signupResult.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(signupResult.getBody()).contains("Username is required");
 		assertThat(signupResult.getBody()).contains("Password is required");
+	}
+
+	ResponseEntity<String> getChangePasswordForm(String sessionId) {
+		ResponseEntity<String> form = this.restClient.get()
+			.uri("/change-password")
+			.cookie("SESSION", sessionId)
+			.retrieve()
+			.toEntity(String.class);
+		assertThat(form.getStatusCode()).isEqualTo(HttpStatus.OK);
+		return form;
+	}
+
+	ResponseEntity<String> postChangePassword(String currentPassword, String newPassword, String confirmNewPassword,
+			ResponseEntity<String> form, String sessionId) {
+		return this.restClient.post()
+			.uri("/change-password")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("currentPassword=%s&newPassword=%s&confirmNewPassword=%s&_csrf=%s".formatted(currentPassword,
+					newPassword, confirmNewPassword, csrfToken(form)))
+			.cookie("SESSION", sessionId)
+			.retrieve()
+			.toEntity(String.class);
+	}
+
+	@Test
+	void shouldShowChangePasswordPage() {
+		ResponseEntity<Void> login = formLogin("john@example.com", "password");
+		String sessionId = sessionId(login);
+		ResponseEntity<String> form = getChangePasswordForm(sessionId);
+		assertThat(form.getBody()).contains("Change Password");
+		assertThat(form.getBody()).contains("currentPassword");
+		assertThat(form.getBody()).contains("newPassword");
+	}
+
+	@Test
+	void shouldChangePassword() {
+		// First, sign up a new user for this test
+		ResponseEntity<String> signupForm = getSignupForm();
+		postSignup("changepw@example.com", "oldpassword", "oldpassword", signupForm);
+		// Login
+		ResponseEntity<Void> login = formLogin("changepw@example.com", "oldpassword");
+		String sessionId = sessionId(login);
+		// Get change password form
+		ResponseEntity<String> form = getChangePasswordForm(sessionId);
+		// Change password
+		ResponseEntity<String> result = postChangePassword("oldpassword", "newpassword123", "newpassword123", form,
+				sessionId);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+		assertThat(result.getHeaders().getLocation()).hasPath("/");
+		assertThat(result.getHeaders().getLocation().getQuery()).isEqualTo("passwordChanged");
+		// Verify can login with new password
+		formLogin("changepw@example.com", "newpassword123");
+	}
+
+	@Test
+	void shouldFailChangePasswordWithWrongCurrentPassword() {
+		ResponseEntity<Void> login = formLogin("john@example.com", "password");
+		String sessionId = sessionId(login);
+		ResponseEntity<String> form = getChangePasswordForm(sessionId);
+		ResponseEntity<String> result = postChangePassword("wrongpassword", "newpassword", "newpassword", form,
+				sessionId);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(result.getBody()).contains("Current password is incorrect");
+	}
+
+	@Test
+	void shouldFailChangePasswordWithMismatchedNewPasswords() {
+		ResponseEntity<Void> login = formLogin("john@example.com", "password");
+		String sessionId = sessionId(login);
+		ResponseEntity<String> form = getChangePasswordForm(sessionId);
+		ResponseEntity<String> result = postChangePassword("password", "newpassword1", "newpassword2", form, sessionId);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(result.getBody()).contains("New passwords do not match");
+	}
+
+	@Test
+	void shouldFailChangePasswordWithEmptyFields() {
+		ResponseEntity<Void> login = formLogin("john@example.com", "password");
+		String sessionId = sessionId(login);
+		ResponseEntity<String> form = getChangePasswordForm(sessionId);
+		ResponseEntity<String> result = postChangePassword("", "", "", form, sessionId);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(result.getBody()).contains("Current password is required");
+		assertThat(result.getBody()).contains("New password is required");
 	}
 
 	@Test

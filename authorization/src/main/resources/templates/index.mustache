@@ -12,6 +12,12 @@
     <h1 class="title">Welcome</h1>
     <p class="subtitle">You are signed in</p>
 
+    {{#springMacroRequestContext.request.parameterMap.passwordChanged}}
+    <div class="success-banner" style="display:flex;align-items:center;gap:0.5rem;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);border-radius:8px;padding:0.75rem 1rem;margin-bottom:2rem;">
+        <span style="font-size:0.8125rem;color:#86efac;">Password has been changed successfully.</span>
+    </div>
+    {{/springMacroRequestContext.request.parameterMap.passwordChanged}}
+
     <div style="margin-bottom: 3rem;">
         <p class="user-info">Username</p>
         <p class="username">{{username}}</p>
@@ -32,7 +38,8 @@
     <p class="no-clients">No applications registered.</p>
     {{/clients}}
 
-    <a href="/passkeys" class="btn btn-secondary" style="margin-top: 3rem;">Manage Passkeys</a>
+    <a href="/change-password" class="btn btn-secondary" style="margin-top: 3rem;">Change Password</a>
+    <a href="/passkeys" class="btn btn-secondary" style="margin-top: 0.75rem;">Manage Passkeys</a>
     <a href="/logout" class="btn" style="margin-top: 0.75rem;">Sign Out</a>
 </div>
 

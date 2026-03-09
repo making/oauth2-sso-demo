@@ -131,7 +131,9 @@ public class SecurityConfig {
 
 	@Bean
 	public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource) {
-		return new JdbcUserDetailsManager(dataSource);
+		JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
+		manager.setEnableUpdatePassword(true);
+		return manager;
 	}
 
 	@Bean
