@@ -12,6 +12,9 @@ import java.util.Map;
 
 import lol.maki.dev.authorization.JwtProperties;
 import lol.maki.dev.authorization.WebAuthnProps;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,9 +27,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.jackson.SecurityJacksonModules;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationParametersMapper;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationRowMapper;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
@@ -35,6 +41,7 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.security.web.webauthn.jackson.WebauthnJacksonModule;
 import org.springframework.security.web.webauthn.management.JdbcPublicKeyCredentialUserEntityRepository;
 import org.springframework.security.web.webauthn.management.JdbcUserCredentialRepository;
 import org.springframework.security.web.webauthn.management.PublicKeyCredentialUserEntityRepository;
@@ -117,7 +124,33 @@ public class SecurityConfig {
 	@Bean
 	public JdbcOAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate,
 			RegisteredClientRepository registeredClientRepository) {
-		return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
+		return createWebAuthnAwareAuthorizationService(jdbcTemplate, registeredClientRepository);
+	}
+
+	public static JdbcOAuth2AuthorizationService createWebAuthnAwareAuthorizationService(JdbcTemplate jdbcTemplate,
+			RegisteredClientRepository registeredClientRepository) {
+		JsonMapper jsonMapper = createWebAuthnAwareJsonMapper();
+		JdbcOAuth2AuthorizationService authorizationService = new JdbcOAuth2AuthorizationService(jdbcTemplate,
+				registeredClientRepository);
+		authorizationService.setAuthorizationRowMapper(
+				new JsonMapperOAuth2AuthorizationRowMapper(registeredClientRepository, jsonMapper));
+		authorizationService
+			.setAuthorizationParametersMapper(new JsonMapperOAuth2AuthorizationParametersMapper(jsonMapper));
+		return authorizationService;
+	}
+
+	static JsonMapper createWebAuthnAwareJsonMapper() {
+		ClassLoader classLoader = SecurityConfig.class.getClassLoader();
+		// Configure the type validator via WebAuthnSessionJacksonModule before
+		// SecurityJacksonModules builds the PolymorphicTypeValidator
+		WebAuthnSessionJacksonModule webAuthnSessionModule = new WebAuthnSessionJacksonModule();
+		BasicPolymorphicTypeValidator.Builder typeValidatorBuilder = BasicPolymorphicTypeValidator.builder();
+		webAuthnSessionModule.configurePolymorphicTypeValidator(typeValidatorBuilder);
+		List<JacksonModule> modules = SecurityJacksonModules.getModules(classLoader, typeValidatorBuilder);
+		// Add WebauthnJacksonModule (excluded by default from SecurityJacksonModules)
+		modules.add(new WebauthnJacksonModule());
+		modules.add(webAuthnSessionModule);
+		return JsonMapper.builder().addModules(modules).build();
 	}
 
 	@Bean
