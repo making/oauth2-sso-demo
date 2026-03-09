@@ -3,6 +3,7 @@ package lol.maki.dev.todo.todo.web;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import lol.maki.dev.todo.todo.Todo;
@@ -88,7 +89,8 @@ public class TodoController {
 
 	@ExceptionHandler(TodoService.NotFoundException.class)
 	public ResponseEntity<?> handleNotFound(TodoService.NotFoundException e) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			.body(Map.of("message", Objects.toString(e.getMessage(), "Not found")));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

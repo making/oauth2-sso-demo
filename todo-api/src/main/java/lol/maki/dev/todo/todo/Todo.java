@@ -2,7 +2,10 @@ package lol.maki.dev.todo.todo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
+
+import org.jspecify.annotations.Nullable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record Todo(UUID todoId, String todoTitle, boolean finished, Instant createdAt, String createdBy,
@@ -27,19 +30,19 @@ public record Todo(UUID todoId, String todoTitle, boolean finished, Instant crea
 		private TodoBuilder() {
 		}
 
-		private UUID todoId;
+		@Nullable private UUID todoId;
 
-		private String todoTitle;
+		@Nullable private String todoTitle;
 
 		private boolean finished;
 
-		private Instant createdAt;
+		@Nullable private Instant createdAt;
 
-		private String createdBy;
+		@Nullable private String createdBy;
 
-		private Instant updatedAt;
+		@Nullable private Instant updatedAt;
 
-		private String updatedBy;
+		@Nullable private String updatedBy;
 
 		public TodoBuilder todoId(UUID todoId) {
 			this.todoId = todoId;
@@ -77,8 +80,13 @@ public record Todo(UUID todoId, String todoTitle, boolean finished, Instant crea
 		}
 
 		public Todo build() {
-			return new Todo(this.todoId, this.todoTitle, this.finished, this.createdAt, this.createdBy, this.updatedAt,
-					this.updatedBy);
+			return new Todo(Objects.requireNonNull(this.todoId, "todoId must be set before calling build()"),
+					Objects.requireNonNull(this.todoTitle, "todoTitle must be set before calling build()"),
+					this.finished,
+					Objects.requireNonNull(this.createdAt, "createdAt must be set before calling build()"),
+					Objects.requireNonNull(this.createdBy, "createdBy must be set before calling build()"),
+					Objects.requireNonNull(this.updatedAt, "updatedAt must be set before calling build()"),
+					Objects.requireNonNull(this.updatedBy, "updatedBy must be set before calling build()"));
 		}
 
 	}
