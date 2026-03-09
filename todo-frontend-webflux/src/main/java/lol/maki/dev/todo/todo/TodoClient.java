@@ -1,4 +1,4 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.todo;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,4 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

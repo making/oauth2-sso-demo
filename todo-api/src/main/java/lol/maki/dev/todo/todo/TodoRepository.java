@@ -1,4 +1,4 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.todo;
 
 import java.util.ArrayList;
 import java.util.Collections;

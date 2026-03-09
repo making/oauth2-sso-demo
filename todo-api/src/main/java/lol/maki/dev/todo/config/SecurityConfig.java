@@ -1,4 +1,4 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.config;
 
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.boot.security.oauth2.server.resource.autoconfigure.servlet.JwkSetUriJwtDecoderBuilderCustomizer;

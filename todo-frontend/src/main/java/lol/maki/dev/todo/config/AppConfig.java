@@ -1,5 +1,6 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.config;
 
+import lol.maki.dev.todo.todo.TodoClient;
 import org.springframework.security.oauth2.client.web.client.support.OAuth2RestClientHttpServiceGroupConfigurer;
 import org.springframework.web.service.registry.ImportHttpServices;
 import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;

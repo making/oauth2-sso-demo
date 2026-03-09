@@ -1,10 +1,12 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.todo;
 
 import java.time.Instant;
 import java.time.InstantSource;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import lol.maki.dev.todo.TodoBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.IdGenerator;
 

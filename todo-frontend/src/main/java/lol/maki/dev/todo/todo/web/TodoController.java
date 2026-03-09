@@ -1,13 +1,15 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.todo.web;
 
+import java.util.List;
+
+import lol.maki.dev.todo.todo.Todo;
+import lol.maki.dev.todo.todo.TodoClient;
 import org.springframework.context.annotation.Fallback;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.HttpStatusCodeException;
 
 @RestController
 @RequestMapping(path = "/api/todos")
@@ -21,32 +23,32 @@ public class TodoController implements TodoClient {
 	}
 
 	@Override
-	public Flux<Todo> listTodos() {
+	public List<Todo> listTodos() {
 		return this.delegate.listTodos();
 	}
 
 	@Override
-	public Mono<Todo> getTodo(String todoId) {
+	public Todo getTodo(String todoId) {
 		return this.delegate.getTodo(todoId);
 	}
 
 	@Override
-	public Mono<Todo> postTodo(Todo todo) {
+	public Todo postTodo(Todo todo) {
 		return this.delegate.postTodo(todo);
 	}
 
 	@Override
-	public Mono<Todo> patchTodo(String todoId, Todo todo) {
+	public Todo patchTodo(String todoId, Todo todo) {
 		return this.delegate.patchTodo(todoId, todo);
 	}
 
 	@Override
-	public Mono<Void> deleteTodo(String todoId) {
-		return this.delegate.deleteTodo(todoId);
+	public void deleteTodo(String todoId) {
+		this.delegate.deleteTodo(todoId);
 	}
 
-	@ExceptionHandler(WebClientResponseException.class)
-	public ResponseEntity<?> handleWebClientResponseException(WebClientResponseException e) {
+	@ExceptionHandler(HttpStatusCodeException.class)
+	public ResponseEntity<?> handleHttpStatusCodeException(HttpStatusCodeException e) {
 		return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
 	}
 

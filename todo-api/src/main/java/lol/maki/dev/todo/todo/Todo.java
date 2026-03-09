@@ -1,4 +1,4 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.todo;
 
 import am.ik.yavi.arguments.Arguments;
 import am.ik.yavi.arguments.Arguments2;

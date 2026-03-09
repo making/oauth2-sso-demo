@@ -1,4 +1,4 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.auth.web;
 
 import java.util.Map;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

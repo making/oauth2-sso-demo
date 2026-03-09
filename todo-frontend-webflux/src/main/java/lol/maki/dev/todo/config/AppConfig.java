@@ -1,5 +1,6 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.config;
 
+import lol.maki.dev.todo.todo.TodoClient;
 import org.springframework.boot.webclient.WebClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

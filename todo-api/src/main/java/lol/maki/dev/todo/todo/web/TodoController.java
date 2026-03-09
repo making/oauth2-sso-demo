@@ -1,4 +1,4 @@
-package lol.maki.dev.todo;
+package lol.maki.dev.todo.todo.web;
 
 import am.ik.yavi.arguments.Arguments;
 import am.ik.yavi.arguments.Arguments1Validator;
@@ -10,6 +10,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import lol.maki.dev.todo.todo.Todo;
+import lol.maki.dev.todo.todo.TodoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
