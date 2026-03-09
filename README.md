@@ -19,7 +19,7 @@ or
 ./mvnw spring-boot:run -f todo-frontend-webflux -Dspring-boot.run.arguments="--spring.docker.compose.enabled=true --spring.docker.compose.file=$(pwd)/compose.yaml"
 ```
 
-Visit http://localhost:8080 (todo-frontend). The first time you visit, you will be redirected to http://127.0.0.1:9000 (authorization).
+Visit http://localhost:8080 (todo-frontend). The first time you visit, you will be redirected to http://authorization.localhost:9000 (authorization).
 
 <img width="1024" alt="Image" src="https://github.com/user-attachments/assets/f770c7a3-1cd3-425b-ba35-e884641f8428" />
 
@@ -36,6 +36,10 @@ You can see the tracing via Zipkin (http://localhost:9411)
 
 <img width="1024" alt="Image" src="https://github.com/user-attachments/assets/77767d78-8bbb-4910-b54f-43b4d2df8068" />
 <img width="1024" alt="Image" src="https://github.com/user-attachments/assets/0071db90-790c-4835-8cb7-2223d0eb0073" />
+
+In the authorization server, you can also change the password and manage passkeys.
+
+<img width="1024" alt="Image" src="https://github.com/user-attachments/assets/27aa066a-0bfd-4a32-b7e3-075906878231" />
 
 Docker Compose will automatically start up when the app is started, but it will not automatically shut down, so if you do not need Zipkin after stopping the app, please shut down Docker Compose as well.
 
