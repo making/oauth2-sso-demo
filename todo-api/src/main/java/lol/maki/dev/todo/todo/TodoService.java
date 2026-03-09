@@ -8,9 +8,11 @@ import java.util.UUID;
 
 import lol.maki.dev.todo.todo.Todo.TodoBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.IdGenerator;
 
 @Service
+@Transactional
 public class TodoService {
 
 	private final TodoRepository todoRepository;
@@ -25,10 +27,12 @@ public class TodoService {
 		this.instantSource = instantSource;
 	}
 
+	@Transactional(readOnly = true)
 	public List<Todo> getTodos() {
 		return this.todoRepository.findAll();
 	}
 
+	@Transactional(readOnly = true)
 	public Todo getTodo(UUID todoId) {
 		return this.todoRepository.findById(todoId).orElseThrow(() -> new NotFoundException(todoId));
 	}
@@ -44,8 +48,7 @@ public class TodoService {
 			.updatedBy(email)
 			.updatedAt(now)
 			.build();
-		Todo updated = this.todoRepository.save(todo);
-		return this.todoRepository.save(updated);
+		return this.todoRepository.save(todo);
 	}
 
 	public Todo update(UUID todoId, String todoTitle, boolean finished, String username) {
