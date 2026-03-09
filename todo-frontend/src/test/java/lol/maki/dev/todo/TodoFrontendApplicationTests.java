@@ -5,6 +5,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,8 +21,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +36,14 @@ import static org.mockito.Mockito.verify;
 @Import({ TestcontainersConfiguration.class })
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = { "server.port=52241" })
 class TodoFrontendApplicationTests {
+
+	@TempDir
+	static Path tempDir;
+
+	@DynamicPropertySource
+	static void dynamicProperties(DynamicPropertyRegistry registry) {
+		registry.add("spring.datasource.url", () -> "jdbc:sqlite:" + tempDir.resolve("test.db").toAbsolutePath());
+	}
 
 	static Playwright playwright;
 
@@ -93,7 +105,7 @@ class TodoFrontendApplicationTests {
 	void shouldShowTodoListAfterSuccessfulLogin() {
 		given(this.todoClient.listTodos()).willReturn(List.of(todo1, todo2, todo3));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.title()).isEqualTo("Todo List");
 		Locator rows = page.locator("tbody > tr");
 		assertThat(rows.count()).isEqualTo(3);
@@ -119,7 +131,7 @@ class TodoFrontendApplicationTests {
 			.will(invocation -> new Todo(todo2.todoId(), invocation.getArgument(0, Todo.class).todoTitle(), false,
 					todo2.createdAt(), todo2.createdBy(), todo2.updatedAt(), todo2.updatedBy()));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.locator("tbody > tr").count()).isEqualTo(1);
 		page.getByPlaceholder("What needs to be done?").fill("Test Todo!");
 		page.locator("button[type=submit]").press("Enter");
@@ -142,7 +154,7 @@ class TodoFrontendApplicationTests {
 		given(this.todoClient.listTodos()).willReturn(List.of(todo1)).willReturn(List.of(patched));
 		given(this.todoClient.patchTodo(any(), any())).willReturn(patched);
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		page.locator("tbody > tr").first().locator("button").first().click();
 		page.waitForCondition(
 				() -> page.locator("tbody > tr").nth(0).locator("button[title=\"Mark as incomplete\"]").count() == 1);
@@ -156,7 +168,7 @@ class TodoFrontendApplicationTests {
 		given(this.todoClient.listTodos()).willReturn(List.of(todo2)).willReturn(List.of(patched));
 		given(this.todoClient.patchTodo(any(), any())).willReturn(patched);
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.locator("tbody > tr").nth(0).locator("button[title=\"Mark as incomplete\"]").count())
 			.isEqualTo(1);
 		page.locator("tbody > tr").first().locator("button").first().click();
@@ -169,7 +181,7 @@ class TodoFrontendApplicationTests {
 	void shouldHideCompleteTodosAfterCheckingHideButton() {
 		given(this.todoClient.listTodos()).willReturn(List.of(todo1, todo2, todo3));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.locator("tbody > tr").count()).isEqualTo(3);
 		page.getByText("Hide completed").check();
 		page.waitForCondition(() -> page.locator("tbody > tr").count() == 2);
@@ -181,7 +193,7 @@ class TodoFrontendApplicationTests {
 		given(this.todoClient.patchTodo(any(), any())).willReturn(new Todo(todo1.todoId(), todo1.todoTitle(), true,
 				todo1.createdAt(), todo1.createdBy(), todo1.updatedAt(), todo1.updatedBy()));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.locator("tbody > tr").count()).isEqualTo(3);
 		page.locator("tbody > tr").first().locator("button").nth(1).click();
 		page.waitForCondition(() -> page.locator("tbody > tr").count() == 2);

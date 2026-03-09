@@ -155,7 +155,7 @@ interface WelcomeMessageProps {
 }
 
 const WelcomeMessage = ({ username }: WelcomeMessageProps) => (
-    <p className="text-[0.8125rem] font-medium text-[rgba(255,255,255,0.35)] tracking-[0.2em] uppercase mb-8">
+    <p className="text-[0.8125rem] font-medium text-[rgba(255,255,255,0.35)] tracking-[0.2em] uppercase">
         Welcome, <span className="text-[#f0ead6] font-semibold normal-case tracking-normal">{username}</span>!
     </p>
 );

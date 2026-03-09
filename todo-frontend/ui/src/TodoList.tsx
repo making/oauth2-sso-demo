@@ -189,7 +189,15 @@ const TodoList = () => {
         <Container>
             <Header>Todo List</Header>
 
-            {userData && <WelcomeMessage username={userData.name} />}
+            {userData && (
+                <div className="flex justify-between items-center mb-8">
+                    <WelcomeMessage username={userData.name} />
+                    <form action="/logout" method="post">
+                        <input type="hidden" name="_csrf" value={userData.csrfToken} />
+                        <StyledButton type="submit" variant="danger">Sign Out</StyledButton>
+                    </form>
+                </div>
+            )}
 
             <div className="mb-8 bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] p-6 rounded-[10px]">
                 <form
