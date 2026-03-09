@@ -205,8 +205,9 @@ class AuthorizationApplicationTests {
 		ResponseEntity<String> signupForm = getSignupForm();
 		ResponseEntity<Void> signup = postSignup("newuser@example.com", "newpassword", "newpassword", signupForm);
 		assertThat(signup.getStatusCode()).isEqualTo(HttpStatus.FOUND);
-		assertThat(signup.getHeaders().getLocation()).hasPath("/login");
-		assertThat(signup.getHeaders().getLocation().getQuery()).isEqualTo("signup");
+		URI signupLocation = signup.getHeaders().getLocation();
+		assertThat(signupLocation).isNotNull().hasPath("/login");
+		assertThat(signupLocation.getQuery()).isEqualTo("signup");
 		// Verify the user can log in
 		formLogin("newuser@example.com", "newpassword");
 	}
@@ -318,8 +319,9 @@ class AuthorizationApplicationTests {
 		ResponseEntity<String> result = postChangePassword("oldpassword", "newpassword123", "newpassword123", form,
 				sessionId);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FOUND);
-		assertThat(result.getHeaders().getLocation()).hasPath("/");
-		assertThat(result.getHeaders().getLocation().getQuery()).isEqualTo("passwordChanged");
+		URI resultLocation = result.getHeaders().getLocation();
+		assertThat(resultLocation).isNotNull().hasPath("/");
+		assertThat(resultLocation.getQuery()).isEqualTo("passwordChanged");
 		// Verify can login with new password
 		formLogin("changepw@example.com", "newpassword123");
 	}

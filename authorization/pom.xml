@@ -209,6 +209,23 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>am.ik.maven</groupId>
+				<artifactId>nullability-maven-plugin</artifactId>
+				<version>0.3.0</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>configure</goal>
+							<goal>generate-package-info</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<checking>tests</checking>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.graalvm.buildtools</groupId>
 				<artifactId>native-maven-plugin</artifactId>
 			</plugin>
