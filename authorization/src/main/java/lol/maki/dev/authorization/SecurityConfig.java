@@ -117,13 +117,13 @@ public class SecurityConfig {
 		return new JdbcRegisteredClientRepository(jdbcTemplate);
 	}
 
-	// @Bean // doesn't work with Passkey
+	@Bean
 	public JdbcOAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate,
 			RegisteredClientRepository registeredClientRepository) {
 		return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
 	}
 
-	// @Bean // doesn't work with Passkey
+	@Bean
 	public JdbcOAuth2AuthorizationConsentService authorizationConsentService(JdbcTemplate jdbcTemplate,
 			RegisteredClientRepository registeredClientRepository) {
 		return new JdbcOAuth2AuthorizationConsentService(jdbcTemplate, registeredClientRepository);
