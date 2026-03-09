@@ -10,8 +10,10 @@ import com.nimbusds.jose.proc.SecurityContext;
 import java.util.List;
 import java.util.Map;
 
+import lol.maki.dev.authorization.BackChannelLogoutProps;
 import lol.maki.dev.authorization.JwtProperties;
 import lol.maki.dev.authorization.WebAuthnProps;
+import lol.maki.dev.authorization.oidc.BackChannelLogoutHandler;
 import tools.jackson.databind.JacksonModule;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
@@ -47,6 +49,11 @@ import org.springframework.security.web.webauthn.management.JdbcUserCredentialRe
 import org.springframework.security.web.webauthn.management.PublicKeyCredentialUserEntityRepository;
 import org.springframework.security.web.webauthn.management.UserCredentialRepository;
 
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
+
 import javax.sql.DataSource;
 
 @Configuration(proxyBeanMethods = false)
@@ -76,7 +83,8 @@ public class SecurityConfig {
 
 	@Bean
 	@Order(2)
-	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
+			BackChannelLogoutHandler backChannelLogoutHandler) throws Exception {
 		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers(EndpointRequest.toAnyEndpoint())
 			.permitAll()
 			.requestMatchers("/css/**", "/js/**", "/login", "/signup", "/error")
@@ -84,7 +92,7 @@ public class SecurityConfig {
 			.anyRequest()
 			.authenticated())
 			.formLogin(form -> form.loginPage("/login"))
-			.logout(logout -> logout.logoutSuccessUrl("/login"))
+			.logout(logout -> logout.addLogoutHandler(backChannelLogoutHandler).logoutSuccessUrl("/login"))
 			.webAuthn(webauthn -> webauthn.rpName(this.webAuthnProps.rpName())
 				.rpId(this.webAuthnProps.rpId())
 				.allowedOrigins(this.webAuthnProps.allowedOrigins())
@@ -174,6 +182,22 @@ public class SecurityConfig {
 	@Bean
 	public PublicKeyCredentialUserEntityRepository publicKeyCredentialUserEntityRepository(JdbcTemplate jdbcTemplate) {
 		return new JdbcPublicKeyCredentialUserEntityRepository(jdbcTemplate);
+	}
+
+	@Bean
+	public BackChannelLogoutHandler backChannelLogoutHandler(JWKSource<SecurityContext> jwkSource,
+			BackChannelLogoutProps backChannelLogoutProps) {
+		return new BackChannelLogoutHandler(jwkSource, backChannelLogoutProps.issuer(), backChannelLogoutProps.uris());
+	}
+
+	@Bean
+	public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<?> sessionRepository) {
+		return new SpringSessionBackedSessionRegistry<>(sessionRepository);
+	}
+
+	@Bean
+	public HttpSessionEventPublisher httpSessionEventPublisher() {
+		return new HttpSessionEventPublisher();
 	}
 
 	@SuppressWarnings("deprecation")
