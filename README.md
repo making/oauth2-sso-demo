@@ -21,7 +21,7 @@ or
 
 Visit http://localhost:8080 (todo-frontend). The first time you visit, you will be redirected to http://127.0.0.1:9000 (authorization).
 
-<img width="1024" alt="Image" src="https://github.com/user-attachments/assets/0a009351-92cb-455a-b3e8-bb031697bec2" />
+<img width="1024" alt="Image" src="https://github.com/user-attachments/assets/f770c7a3-1cd3-425b-ba35-e884641f8428" />
 
 * Username: `john@example.com`
 * Password: `password`
