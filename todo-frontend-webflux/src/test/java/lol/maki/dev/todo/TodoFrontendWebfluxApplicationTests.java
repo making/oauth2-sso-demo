@@ -94,7 +94,7 @@ class TodoFrontendWebfluxApplicationTests {
 	void shouldShowTodoListAfterSuccessfulLogin() {
 		given(this.todoClient.listTodos()).willReturn(Flux.just(todo1, todo2, todo3));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.title()).isEqualTo("Todo List");
 		Locator rows = page.locator("tbody > tr");
 		assertThat(rows.count()).isEqualTo(3);
@@ -120,7 +120,7 @@ class TodoFrontendWebfluxApplicationTests {
 			.will(invocation -> new Todo(todo2.todoId(), invocation.getArgument(0, Todo.class).todoTitle(), false,
 					todo2.createdAt(), todo2.createdBy(), todo2.updatedAt(), todo2.updatedBy()));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.locator("tbody > tr").count()).isEqualTo(1);
 		page.getByPlaceholder("What needs to be done?").fill("Test Todo!");
 		page.locator("button[type=submit]").press("Enter");
@@ -143,7 +143,7 @@ class TodoFrontendWebfluxApplicationTests {
 		given(this.todoClient.listTodos()).willReturn(Flux.just(todo1)).willReturn(Flux.just(patched));
 		given(this.todoClient.patchTodo(any(), any())).willReturn(Mono.just(patched));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		page.locator("tbody > tr").first().locator("button").first().click();
 		page.waitForCondition(
 				() -> page.locator("tbody > tr").nth(0).locator("button[title=\"Mark as incomplete\"]").count() == 1);
@@ -157,7 +157,7 @@ class TodoFrontendWebfluxApplicationTests {
 		given(this.todoClient.listTodos()).willReturn(Flux.just(todo2)).willReturn(Flux.just(patched));
 		given(this.todoClient.patchTodo(any(), any())).willReturn(Mono.just(patched));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.locator("tbody > tr").nth(0).locator("button[title=\"Mark as incomplete\"]").count())
 			.isEqualTo(1);
 		page.locator("tbody > tr").first().locator("button").first().click();
@@ -170,7 +170,7 @@ class TodoFrontendWebfluxApplicationTests {
 	void shouldHideCompleteTodosAfterCheckingHideButton() {
 		given(this.todoClient.listTodos()).willReturn(Flux.just(todo1, todo2, todo3));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.locator("tbody > tr").count()).isEqualTo(3);
 		page.getByText("Hide completed").check();
 		page.waitForCondition(() -> page.locator("tbody > tr").count() == 2);
@@ -183,7 +183,7 @@ class TodoFrontendWebfluxApplicationTests {
 		given(this.todoClient.patchTodo(any(), any())).willReturn(Mono.just(new Todo(todo1.todoId(), todo1.todoTitle(),
 				true, todo1.createdAt(), todo1.createdBy(), todo1.updatedAt(), todo1.updatedBy())));
 		this.login("test@example.com", "test");
-		assertThat(page.locator("h1 + p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
 		assertThat(page.locator("tbody > tr").count()).isEqualTo(3);
 		page.locator("tbody > tr").first().locator("button").nth(1).click();
 		page.waitForCondition(() -> page.locator("tbody > tr").count() == 2);
