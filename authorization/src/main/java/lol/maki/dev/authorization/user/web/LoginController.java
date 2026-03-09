@@ -1,4 +1,4 @@
-package lol.maki.dev.authorization;
+package lol.maki.dev.authorization.user.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,12 +8,12 @@ public class LoginController {
 
 	@GetMapping(path = "/login")
 	public String login() {
-		return "login";
+		return "user/login";
 	}
 
 	@GetMapping(path = "/logout")
 	public String logout() {
-		return "logout";
+		return "user/logout";
 	}
 
 }

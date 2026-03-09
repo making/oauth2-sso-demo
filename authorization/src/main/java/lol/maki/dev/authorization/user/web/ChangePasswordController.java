@@ -1,4 +1,4 @@
-package lol.maki.dev.authorization;
+package lol.maki.dev.authorization.user.web;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class ChangePasswordController {
 	@GetMapping("/change-password")
 	public String changePasswordForm(Model model) {
 		model.addAttribute("changePasswordForm", new ChangePasswordForm("", "", ""));
-		return "change-password";
+		return "user/change-password";
 	}
 
 	@PostMapping("/change-password")
@@ -52,7 +52,7 @@ public class ChangePasswordController {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("fieldErrors",
 					bindingResult.getFieldErrors().stream().collect(Collectors.groupingBy(FieldError::getField)));
-			return "change-password";
+			return "user/change-password";
 		}
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication == null) {

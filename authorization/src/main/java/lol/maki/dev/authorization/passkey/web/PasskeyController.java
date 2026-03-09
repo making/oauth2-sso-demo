@@ -1,4 +1,4 @@
-package lol.maki.dev.authorization;
+package lol.maki.dev.authorization.passkey.web;
 
 import java.security.Principal;
 import java.time.ZoneId;
@@ -45,7 +45,7 @@ public class PasskeyController {
 				.toList();
 			model.addAttribute("passkeys", passkeys);
 		}
-		return "passkeys";
+		return "passkey/passkeys";
 	}
 
 }

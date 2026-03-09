@@ -1,4 +1,4 @@
-package lol.maki.dev.authorization;
+package lol.maki.dev.authorization.user.web;
 
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +41,7 @@ public class SignupController {
 	@GetMapping("/signup")
 	public String signupForm(Model model) {
 		model.addAttribute("signupForm", new SignupForm("", "", ""));
-		return "signup";
+		return "user/signup";
 	}
 
 	@PostMapping("/signup")
@@ -49,7 +49,7 @@ public class SignupController {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("fieldErrors",
 					bindingResult.getFieldErrors().stream().collect(Collectors.groupingBy(FieldError::getField)));
-			return "signup";
+			return "user/signup";
 		}
 		this.userDetailsManager.createUser(User.withUsername(signupForm.username())
 			.passwordEncoder(this.passwordEncoder::encode)

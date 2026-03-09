@@ -1,4 +1,4 @@
-package lol.maki.dev.authorization;
+package lol.maki.dev.authorization.oauth2;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.PropertyMapper;

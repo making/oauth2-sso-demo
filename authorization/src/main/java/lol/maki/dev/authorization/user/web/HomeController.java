@@ -1,4 +1,4 @@
-package lol.maki.dev.authorization;
+package lol.maki.dev.authorization.user.web;
 
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Controller;
@@ -31,7 +31,7 @@ public class HomeController {
 				AND post_logout_redirect_uris IS NOT NULL""").query(Client.class).list();
 		model.addAttribute("username", principal.getName());
 		model.addAttribute("clients", clients);
-		return "index";
+		return "user/index";
 	}
 
 	public record Client(String clientId, String clientName, String postLogoutRedirectUris) {

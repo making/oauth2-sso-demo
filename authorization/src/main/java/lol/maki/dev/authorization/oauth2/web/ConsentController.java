@@ -1,4 +1,4 @@
-package lol.maki.dev.authorization;
+package lol.maki.dev.authorization.oauth2.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -48,7 +48,7 @@ public class ConsentController {
 		model.addAttribute("state", state);
 		model.addAttribute("scopes", scopesToAuthorize);
 		model.addAttribute("principalName", principal.getName());
-		return "consent";
+		return "oauth2/consent";
 	}
 
 }

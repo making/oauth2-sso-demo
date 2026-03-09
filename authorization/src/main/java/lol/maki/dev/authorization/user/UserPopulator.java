@@ -1,4 +1,4 @@
-package lol.maki.dev.authorization;
+package lol.maki.dev.authorization.user;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.security.autoconfigure.SecurityProperties;

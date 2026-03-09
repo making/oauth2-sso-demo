@@ -1,4 +1,4 @@
-package lol.maki.dev.authorization;
+package lol.maki.dev.authorization.config;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
@@ -10,6 +10,8 @@ import com.nimbusds.jose.proc.SecurityContext;
 import java.util.List;
 import java.util.Map;
 
+import lol.maki.dev.authorization.JwtProperties;
+import lol.maki.dev.authorization.WebAuthnProps;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
