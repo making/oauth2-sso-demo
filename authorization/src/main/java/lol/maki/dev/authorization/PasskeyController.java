@@ -1,7 +1,6 @@
 package lol.maki.dev.authorization;
 
 import java.security.Principal;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -39,12 +38,11 @@ public class PasskeyController {
 		}
 		else {
 			List<CredentialRecord> records = this.credentialsRepository.findByUserId(userEntity.getId());
-			List<Map<String, String>> passkeys = records.stream().map(record -> {
-				Instant created = record.getCreated();
-				Instant lastUsed = record.getLastUsed();
-				return Map.of("credentialId", record.getCredentialId().toBase64UrlString(), "label", record.getLabel(),
-						"created", FORMATTER.format(created), "lastUsed", FORMATTER.format(lastUsed));
-			}).toList();
+			List<Map<String, String>> passkeys = records.stream()
+				.map(record -> Map.of("credentialId", record.getCredentialId().toBase64UrlString(), "label",
+						record.getLabel(), "created", FORMATTER.format(record.getCreated()), "lastUsed",
+						FORMATTER.format(record.getLastUsed())))
+				.toList();
 			model.addAttribute("passkeys", passkeys);
 		}
 		return "passkeys";
