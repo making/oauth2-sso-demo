@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>cc.jilt</groupId>
 			<artifactId>jilt</artifactId>
-			<version>1.8.2</version>
+			<version>1.9.1</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -134,7 +134,7 @@
 						<path>
 							<groupId>cc.jilt</groupId>
 							<artifactId>jilt</artifactId>
-							<version>1.8.2</version>
+							<version>1.9.1</version>
 						</path>
 						<path>
 							<groupId>org.springframework.boot</groupId>
