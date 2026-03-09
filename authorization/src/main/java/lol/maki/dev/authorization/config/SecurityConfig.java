@@ -12,10 +12,7 @@ import java.util.Map;
 
 import lol.maki.dev.authorization.JwtProperties;
 import lol.maki.dev.authorization.WebAuthnProps;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
-import org.springframework.boot.security.oauth2.server.authorization.autoconfigure.servlet.OAuth2AuthorizationServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -46,8 +43,6 @@ import org.springframework.security.web.webauthn.management.UserCredentialReposi
 import javax.sql.DataSource;
 
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({ OAuth2AuthorizationServerProperties.class, SecurityProperties.class,
-		WebAuthnProps.class })
 public class SecurityConfig {
 
 	private final WebAuthnProps webAuthnProps;
