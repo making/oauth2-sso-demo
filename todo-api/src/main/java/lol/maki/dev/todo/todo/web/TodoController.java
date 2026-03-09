@@ -1,11 +1,5 @@
 package lol.maki.dev.todo.todo.web;
 
-import am.ik.yavi.arguments.Arguments;
-import am.ik.yavi.arguments.Arguments1Validator;
-import am.ik.yavi.builder.StringValidatorBuilder;
-import am.ik.yavi.core.ConstraintViolation;
-import am.ik.yavi.core.ConstraintViolations;
-import am.ik.yavi.core.Validated;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +9,18 @@ import lol.maki.dev.todo.todo.Todo;
 import lol.maki.dev.todo.todo.TodoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +39,16 @@ public class TodoController {
 		this.todoService = todoService;
 	}
 
+	@InitBinder("todoCreateRequest")
+	public void initCreateBinder(WebDataBinder binder) {
+		binder.addValidators(todoCreateRequestValidator);
+	}
+
+	@InitBinder("todoUpdateRequest")
+	public void initUpdateBinder(WebDataBinder binder) {
+		binder.addValidators(todoUpdateRequestValidator);
+	}
+
 	@GetMapping(path = "")
 	public ResponseEntity<List<Todo>> getTodos() {
 		List<Todo> todos = this.todoService.getTodos();
@@ -45,34 +56,32 @@ public class TodoController {
 	}
 
 	@GetMapping(path = "/{todoId}")
-	public ResponseEntity<Todo> getTodo(@PathVariable("todoId") UUID todoId) {
+	public ResponseEntity<Todo> getTodo(@PathVariable UUID todoId) {
 		Todo todo = this.todoService.getTodo(todoId);
 		return ResponseEntity.ok(todo);
 	}
 
 	@PostMapping(path = "")
-	public ResponseEntity<?> postTodos(@RequestBody Map<String, String> request, @AuthenticationPrincipal Jwt jwt,
-			UriComponentsBuilder builder) {
-		return TodoCreateRequest.parse(request).fold(this::badRequest, req -> {
-			String email = jwt.getClaimAsString("email");
-			Todo created = this.todoService.create(req.todoTitle(), email);
-			URI uri = builder.pathSegment("todos", created.todoId().toString()).build().toUri();
-			return ResponseEntity.created(uri).body(created);
-		});
+	public ResponseEntity<?> postTodos(@RequestBody @Validated TodoCreateRequest request,
+			@AuthenticationPrincipal Jwt jwt, UriComponentsBuilder builder) {
+		String email = jwt.getClaimAsString("email");
+		Todo created = this.todoService.create(request.todoTitle(), email);
+		URI uri = builder.pathSegment("todos", created.todoId().toString()).build().toUri();
+		return ResponseEntity.created(uri).body(created);
 	}
 
 	@PatchMapping(path = "/{todoId}")
-	public ResponseEntity<?> patchTodo(@PathVariable("todoId") UUID todoId, @RequestBody Map<String, String> request,
+	public ResponseEntity<?> patchTodo(@PathVariable UUID todoId, @RequestBody @Validated TodoUpdateRequest request,
 			@AuthenticationPrincipal Jwt jwt) {
-		return TodoUpdateRequest.parse(request).fold(this::badRequest, req -> {
-			String email = jwt.getClaimAsString("email");
-			Todo updated = this.todoService.update(todoId, req.todoTitle(), req.finished(), email);
-			return ResponseEntity.ok(updated);
-		});
+		String email = jwt.getClaimAsString("email");
+		Todo todo = this.todoService.getTodo(todoId);
+		boolean finished = request.finished() != null ? request.finished() : todo.finished();
+		Todo updated = this.todoService.update(todoId, request.todoTitle(), finished, email);
+		return ResponseEntity.ok(updated);
 	}
 
 	@DeleteMapping(path = "/{todoId}")
-	public ResponseEntity<Void> deleteTodo(@PathVariable("todoId") UUID todoId) {
+	public ResponseEntity<Void> deleteTodo(@PathVariable UUID todoId) {
 		this.todoService.deleteById(todoId);
 		return ResponseEntity.noContent().build();
 	}
@@ -82,32 +91,57 @@ public class TodoController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
 	}
 
-	ResponseEntity<Map<String, Object>> badRequest(List<ConstraintViolation> violations) {
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+		List<Map<String, String>> violations = e.getBindingResult()
+			.getFieldErrors()
+			.stream()
+			.filter(error -> error.getDefaultMessage() != null)
+			.map(error -> Map.of("defaultMessage", error.getDefaultMessage()))
+			.toList();
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(Map.of("message", "Validation failed", "violations", ConstraintViolations.of(violations).details()));
+			.body(Map.of("message", "Validation failed", "violations", violations));
 	}
 
-	record TodoCreateRequest(String todoTitle) {
-		private static final Arguments1Validator<Map<String, String>, TodoCreateRequest> validator = Todo.todoTitleValidator
-			.andThen(TodoCreateRequest::new)
-			.compose(map -> map.get("todoTitle"));
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<?> handleHttpMessageNotReadable(HttpMessageNotReadableException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(Map.of("message", "Validation failed", "violations",
+					List.of(Map.of("defaultMessage", "Request body is not readable"))));
+	}
 
-		static Validated<TodoCreateRequest> parse(Map<String, String> map) {
-			return validator.validate(map);
+	public record TodoCreateRequest(String todoTitle) {
+	}
+
+	public record TodoUpdateRequest(String todoTitle, Boolean finished) {
+	}
+
+	static void validateTodoTitle(String todoTitle, Errors errors) {
+		if (todoTitle.isBlank()) {
+			errors.rejectValue("todoTitle", "notBlank", "\"todoTitle\" must not be blank");
+		}
+		else if (todoTitle.length() > 255) {
+			errors.rejectValue("todoTitle", "maxLength",
+					"The size of \"todoTitle\" must be less than or equal to 255. The given size is "
+							+ todoTitle.length());
 		}
 	}
 
-	record TodoUpdateRequest(String todoTitle, Boolean finished) {
-		private static final Arguments1Validator<Map<String, String>, TodoUpdateRequest> validator = Todo.todoTitleValidator
-			.split(StringValidatorBuilder.of("finished", c -> c.notNull().oneOf(List.of("true", "false")))
-				.build(Boolean::parseBoolean)
-				.andThen(Todo.finishedValidator))
-			.apply(TodoUpdateRequest::new)
-			.compose(map -> Arguments.of(map.get("todoTitle"), map.get("finished")));
+	static final Validator todoCreateRequestValidator = Validator.forType(TodoCreateRequest.class,
+			(request, errors) -> {
+				if (request.todoTitle() == null) {
+					errors.rejectValue("todoTitle", "notBlank", "\"todoTitle\" must not be blank");
+				}
+				else {
+					validateTodoTitle(request.todoTitle(), errors);
+				}
+			});
 
-		static Validated<TodoUpdateRequest> parse(Map<String, String> map) {
-			return validator.validate(map);
-		}
-	}
+	static final Validator todoUpdateRequestValidator = Validator.forType(TodoUpdateRequest.class,
+			(request, errors) -> {
+				if (request.todoTitle() != null) {
+					validateTodoTitle(request.todoTitle(), errors);
+				}
+			});
 
 }

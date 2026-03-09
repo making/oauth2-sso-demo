@@ -64,11 +64,7 @@
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporter-sender-jdk</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>am.ik.yavi</groupId>
-			<artifactId>yavi</artifactId>
-			<version>0.16.0</version>
-		</dependency>
+
 		<dependency>
 			<groupId>am.ik.spring.logbook</groupId>
 			<artifactId>access-logger-logbook</artifactId>

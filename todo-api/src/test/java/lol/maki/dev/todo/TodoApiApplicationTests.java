@@ -300,31 +300,7 @@ class TodoApiApplicationTests {
 			.uri("/todos/{todoId}", "00000000-0000-0000-0000-000000000001")
 			.contentType(MediaType.APPLICATION_JSON)
 			.body("""
-					{"finished": "bar", "todoTitle": "%s"}
-					""".formatted("a".repeat(256)))
-			.headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
-			.retrieve()
-			.toEntity(JsonNode.class);
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(response.getBody()).isNotNull();
-		assertThat(response.getBody().get("message")).isEqualTo(new StringNode("Validation failed"));
-		assertThat(response.getBody().has("violations")).isTrue();
-		assertThat(response.getBody().get("violations").size()).isEqualTo(2);
-		assertThat(response.getBody().get("violations").get(0).get("defaultMessage")).isEqualTo(
-				new StringNode("The size of \"todoTitle\" must be less than or equal to 255. The given size is 256"));
-		assertThat(response.getBody().get("violations").get(1).get("defaultMessage"))
-			.isEqualTo(new StringNode("\"finished\" must be one of the following values: [true, false]"));
-	}
-
-	@Test
-	@Order(4)
-	void shouldReturnBadRequestForNullTodoUpdate() {
-		String accessToken = this.accessTokenSupplier.apply(Set.of("todo:write"));
-		ResponseEntity<JsonNode> response = this.restClient.patch()
-			.uri("/todos/{todoId}", "00000000-0000-0000-0000-000000000001")
-			.contentType(MediaType.APPLICATION_JSON)
-			.body("""
-					{}
+					{"finished": "bar", "todoTitle": "Hello"}
 					""")
 			.headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
 			.retrieve()
@@ -333,11 +309,50 @@ class TodoApiApplicationTests {
 		assertThat(response.getBody()).isNotNull();
 		assertThat(response.getBody().get("message")).isEqualTo(new StringNode("Validation failed"));
 		assertThat(response.getBody().has("violations")).isTrue();
-		assertThat(response.getBody().get("violations").size()).isEqualTo(2);
+		assertThat(response.getBody().get("violations").size()).isEqualTo(1);
 		assertThat(response.getBody().get("violations").get(0).get("defaultMessage"))
-			.isEqualTo(new StringNode("\"todoTitle\" must not be blank"));
-		assertThat(response.getBody().get("violations").get(1).get("defaultMessage"))
-			.isEqualTo(new StringNode("\"finished\" must not be null"));
+			.isEqualTo(new StringNode("Request body is not readable"));
+	}
+
+	@Test
+	@Order(4)
+	void shouldReturnBadRequestForTooLongTodoTitle() {
+		String accessToken = this.accessTokenSupplier.apply(Set.of("todo:write"));
+		ResponseEntity<JsonNode> response = this.restClient.patch()
+			.uri("/todos/{todoId}", "00000000-0000-0000-0000-000000000001")
+			.contentType(MediaType.APPLICATION_JSON)
+			.body("""
+					{"finished": true, "todoTitle": "%s"}
+					""".formatted("a".repeat(256)))
+			.headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
+			.retrieve()
+			.toEntity(JsonNode.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNotNull();
+		assertThat(response.getBody().get("message")).isEqualTo(new StringNode("Validation failed"));
+		assertThat(response.getBody().has("violations")).isTrue();
+		assertThat(response.getBody().get("violations").size()).isEqualTo(1);
+		assertThat(response.getBody().get("violations").get(0).get("defaultMessage")).isEqualTo(
+				new StringNode("The size of \"todoTitle\" must be less than or equal to 255. The given size is 256"));
+	}
+
+	@Test
+	@Order(4)
+	void shouldUpdateTodoWithEmptyBody() {
+		String accessToken = this.accessTokenSupplier.apply(Set.of("todo:write"));
+		ResponseEntity<Todo> response = this.restClient.patch()
+			.uri("/todos/{todoId}", "00000000-0000-0000-0000-000000000001")
+			.contentType(MediaType.APPLICATION_JSON)
+			.body("""
+					{}
+					""")
+			.headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
+			.retrieve()
+			.toEntity(Todo.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getBody()).isNotNull();
+		assertThat(response.getBody().todoTitle()).isEqualTo("Hello World!!");
+		assertThat(response.getBody().finished()).isTrue();
 	}
 
 	@Test
