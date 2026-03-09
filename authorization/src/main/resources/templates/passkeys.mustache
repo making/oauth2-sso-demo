@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Passkeys</title>
+    <link rel="stylesheet" href="/css/style.css">
+    {{#_csrf}}
+    <meta name="csrf-header" content="{{_csrf.headerName}}">
+    <meta name="csrf-token" content="{{_csrf.token}}">
+    {{/_csrf}}
+    <script src="/js/script.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="title">Passkeys</h1>
+    <p class="subtitle">Manage your passkeys</p>
+
+    <div class="passkeys-card">
+        <div class="card-header">
+            <h2 class="card-title">Your passkeys</h2>
+            <button class="btn-add">Add a passkey</button>
+        </div>
+        {{#passkeys}}
+        <div class="passkey-list" id="passkey-list">
+            {{#.}}
+            <div class="passkey-item">
+                <div class="passkey-info">
+                    <div class="passkey-name">{{label}}</div>
+                    <div class="passkey-meta">Added on {{created}} | Last used on {{lastUsed}}</div>
+                </div>
+                <div class="passkey-actions">
+                    <button class="action-btn delete-icon" title="Delete" data-id="{{credentialId}}">Delete</button>
+                </div>
+            </div>
+            {{/.}}
+        </div>
+        {{/passkeys}}
+        {{^passkeys}}
+        <div class="empty-state">
+            <div class="empty-state-text">No passkeys yet</div>
+            <button class="btn-add">Add your first passkey</button>
+        </div>
+        {{/passkeys}}
+    </div>
+
+    <a href="/" class="btn btn-secondary" style="margin-top: 2rem;">Back to Home</a>
+</div>
+
+<div class="modal-overlay modal-close" id="add-modal" style="display: none;">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title">Add a new passkey</h3>
+        </div>
+        <div class="modal-body">
+            <div class="field">
+                <label for="passkey-name">Label</label>
+                <input type="text" class="form-input" placeholder="e.g., iCloud Keychain" id="passkey-name">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary modal-close" style="height: 48px;">Cancel</button>
+            <button class="btn" id="btn-add-passkey" style="height: 48px;">Add passkey</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -354,3 +354,173 @@ body::before {
     color: rgba(255, 255, 255, 0.3);
     line-height: 1.6;
 }
+
+/* Passkeys management */
+.passkeys-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f0ead6;
+}
+
+.btn-add {
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #d4e157;
+    background: transparent;
+    border: 1px solid rgba(212, 225, 87, 0.3);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-add:hover {
+    background: rgba(212, 225, 87, 0.1);
+    border-color: rgba(212, 225, 87, 0.5);
+}
+
+.passkey-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.passkey-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.passkey-item:last-child {
+    border-bottom: none;
+}
+
+.passkey-info {
+    flex: 1;
+}
+
+.passkey-name {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #e0e0e0;
+    margin-bottom: 0.25rem;
+}
+
+.passkey-meta {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.passkey-actions {
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.action-btn {
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #f87171;
+    background: transparent;
+    border: 1px solid rgba(248, 113, 113, 0.25);
+    border-radius: 6px;
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.action-btn:hover {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2.5rem 1.5rem;
+}
+
+.empty-state-text {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal {
+    background: #1a1a1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    padding: 1.5rem;
+}
+
+.modal-header {
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #f0ead6;
+}
+
+.modal-body {
+    margin-bottom: 1.5rem;
+}
+
+.modal-body .field input,
+.modal-body .form-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: border-color 0.15s;
+}
+
+.modal-body .field input:focus,
+.modal-body .form-input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}

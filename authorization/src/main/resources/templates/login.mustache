@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In</title>
     <link rel="stylesheet" href="/css/style.css">
+    {{#_csrf}}
+    <meta name="csrf-header" content="{{_csrf.headerName}}">
+    <meta name="csrf-token" content="{{_csrf.token}}">
+    {{/_csrf}}
+    <script src="/js/script.js"></script>
 </head>
 <body>
 
@@ -60,6 +65,8 @@
 
         <button type="submit" class="btn">Continue</button>
     </form>
+
+    <button type="button" id="passkey-signin" class="btn btn-secondary" style="margin-top: 1rem;">Sign in with a passkey</button>
 
     <p class="consent-footer">Don't have an account? <a href="/signup" style="color: #d4e157;">Sign up</a></p>
 </div>
