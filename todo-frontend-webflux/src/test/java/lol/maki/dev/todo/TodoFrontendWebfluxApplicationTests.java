@@ -19,9 +19,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.testcontainers.containers.GenericContainer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -31,7 +33,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @Import({ TestcontainersConfiguration.class })
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = { "server.port=52241" })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+		properties = { "server.port=" + TestcontainersConfiguration.SERVER_PORT, "server.http2.enabled=false" })
 class TodoFrontendWebfluxApplicationTests {
 
 	static Playwright playwright;
@@ -44,6 +47,9 @@ class TodoFrontendWebfluxApplicationTests {
 
 	@MockitoBean
 	TodoClient todoClient;
+
+	@Autowired
+	GenericContainer<?> authorizationServer;
 
 	@BeforeAll
 	static void before() {
@@ -83,7 +89,7 @@ class TodoFrontendWebfluxApplicationTests {
 	}
 
 	void login(String username, String password) {
-		page.navigate("http://localhost:52241");
+		page.navigate("http://localhost:" + TestcontainersConfiguration.SERVER_PORT);
 		assertThat(page.title()).isEqualTo("Sign In");
 		page.locator("input[name=username]").fill(username);
 		page.locator("input[name=password]").fill(password);
@@ -194,6 +200,43 @@ class TodoFrontendWebfluxApplicationTests {
 	void shouldShowErrorMessageAfterFailedLogin() {
 		this.login("test@example.com", "qwerty");
 		assertThat(page.locator("div.error-banner").textContent()).isNotEmpty();
+	}
+
+	@Test
+	void shouldLogoutAndRedirectToLoginPage() {
+		given(this.todoClient.listTodos()).willReturn(Flux.just(todo1));
+		this.login("test@example.com", "test");
+		// Wait for the todo list page to fully load
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.title()).isEqualTo("Todo List");
+		page.getByText("Sign Out").click();
+		page.waitForURL("**/login**");
+		assertThat(page.title()).isEqualTo("Sign In");
+	}
+
+	@Test
+	void shouldInvalidateSessionOnBackChannelLogout() {
+		given(this.todoClient.listTodos()).willReturn(Flux.just(todo1));
+		this.login("test@example.com", "test");
+		// Wait for the todo list page to fully load
+		assertThat(page.locator("h1 + div p").textContent()).isEqualTo("Welcome, test@example.com!");
+		assertThat(page.title()).isEqualTo("Todo List");
+
+		// Navigate to AS logout page
+		int asPort = authorizationServer.getMappedPort(9000);
+		page.navigate("http://127.0.0.1:" + asPort + "/logout");
+		page.locator("button[type=submit]").waitFor();
+		assertThat(page.title()).isEqualTo("Sign Out");
+
+		// Click Sign Out on AS - this triggers back-channel logout to todo-frontend
+		page.locator("button[type=submit]").click();
+		page.waitForURL("**/login**");
+
+		// Navigate back to todo-frontend - session should be invalidated by back-channel
+		// logout
+		page.navigate("http://localhost:" + TestcontainersConfiguration.SERVER_PORT);
+		assertThat(page.url()).contains("/login");
+		assertThat(page.title()).isEqualTo("Sign In");
 	}
 
 }
