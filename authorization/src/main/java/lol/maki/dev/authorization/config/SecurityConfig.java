@@ -14,6 +14,7 @@ import lol.maki.dev.authorization.BackChannelLogoutProps;
 import lol.maki.dev.authorization.JwtProperties;
 import lol.maki.dev.authorization.WebAuthnProps;
 import lol.maki.dev.authorization.oidc.BackChannelLogoutHandler;
+import org.springframework.web.client.RestClient;
 import tools.jackson.databind.JacksonModule;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
@@ -186,8 +187,9 @@ public class SecurityConfig {
 
 	@Bean
 	public BackChannelLogoutHandler backChannelLogoutHandler(JWKSource<SecurityContext> jwkSource,
-			BackChannelLogoutProps backChannelLogoutProps) {
-		return new BackChannelLogoutHandler(jwkSource, backChannelLogoutProps.issuer(), backChannelLogoutProps.uris());
+			RestClient.Builder restClientBuilder, BackChannelLogoutProps backChannelLogoutProps) {
+		return new BackChannelLogoutHandler(jwkSource, restClientBuilder, backChannelLogoutProps.issuer(),
+				backChannelLogoutProps.uris());
 	}
 
 	@Bean

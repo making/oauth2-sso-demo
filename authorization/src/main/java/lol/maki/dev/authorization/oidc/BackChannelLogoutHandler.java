@@ -52,23 +52,23 @@ public class BackChannelLogoutHandler implements LogoutHandler {
 
 	private final JwtEncoder jwtEncoder;
 
+	private final RestClient restClient;
+
 	private final String issuer;
 
 	private final Map<String, String> backChannelLogoutUris;
-
-	private final RestClient restClient;
 
 	/**
 	 * @param jwkSource the JWK source for signing logout tokens
 	 * @param issuer the issuer URI of the Authorization Server
 	 * @param backChannelLogoutUris a map of client_id to back-channel logout URI
 	 */
-	public BackChannelLogoutHandler(JWKSource<SecurityContext> jwkSource, String issuer,
-			Map<String, String> backChannelLogoutUris) {
+	public BackChannelLogoutHandler(JWKSource<SecurityContext> jwkSource, RestClient.Builder restClientBuilder,
+			String issuer, Map<String, String> backChannelLogoutUris) {
 		this.jwtEncoder = new NimbusJwtEncoder(jwkSource);
+		this.restClient = restClientBuilder.build();
 		this.issuer = issuer;
 		this.backChannelLogoutUris = backChannelLogoutUris;
-		this.restClient = RestClient.create();
 	}
 
 	@Override
