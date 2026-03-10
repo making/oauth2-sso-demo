@@ -34,7 +34,7 @@ import static org.mockito.Mockito.verify;
 
 @Import({ TestcontainersConfiguration.class })
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-		properties = { "server.port=" + TestcontainersConfiguration.SERVER_PORT, "server.http2.enabled=false" })
+		properties = { "server.port=" + TestcontainersConfiguration.SERVER_PORT })
 class TodoFrontendWebfluxApplicationTests {
 
 	static Playwright playwright;
