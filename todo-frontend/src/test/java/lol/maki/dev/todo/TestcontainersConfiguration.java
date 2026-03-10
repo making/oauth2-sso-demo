@@ -48,7 +48,6 @@ class TestcontainersConfiguration {
 			.withEnv("back-channel-logout.issuer", "http://127.0.0.1:" + AS_PORT)
 			.withEnv("back-channel-logout.uris.todo-frontend",
 					"http://host.testcontainers.internal:" + SERVER_PORT + "/logout/connect/back-channel/todo-frontend")
-			.withEnv("management.tracing.export.zipkin.enabled", "false")
 			.withEnv("spring.main.banner-mode", "off")
 			.withExposedPorts(9000)
 			.waitingFor(Wait.forHttp("/actuator/health").forPort(9000).withStartupTimeout(Duration.ofSeconds(10)))
