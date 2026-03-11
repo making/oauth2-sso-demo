@@ -1,5 +1,6 @@
 package lol.maki.dev.todo.config;
 
+import org.springframework.boot.security.autoconfigure.actuate.web.reactive.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -17,7 +18,9 @@ public class SecurityConfig {
 	@Bean
 	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
 			ReactiveClientRegistrationRepository clientRegistrationRepository) {
-		return http.authorizeExchange(auth -> auth.anyExchange().authenticated())
+		return http
+			.authorizeExchange(
+					auth -> auth.matchers(EndpointRequest.toAnyEndpoint()).permitAll().anyExchange().authenticated())
 			.oauth2Login(Customizer.withDefaults())
 			.oauth2Client(Customizer.withDefaults())
 			.oidcLogout(logout -> logout.backChannel(Customizer.withDefaults()))
