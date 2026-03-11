@@ -149,16 +149,13 @@ public class SecurityConfig {
 	}
 
 	static JsonMapper createWebAuthnAwareJsonMapper() {
-		ClassLoader classLoader = SecurityConfig.class.getClassLoader();
-		// Configure the type validator via WebAuthnSessionJacksonModule before
-		// SecurityJacksonModules builds the PolymorphicTypeValidator
-		WebAuthnSessionJacksonModule webAuthnSessionModule = new WebAuthnSessionJacksonModule();
-		BasicPolymorphicTypeValidator.Builder typeValidatorBuilder = BasicPolymorphicTypeValidator.builder();
-		webAuthnSessionModule.configurePolymorphicTypeValidator(typeValidatorBuilder);
-		List<JacksonModule> modules = SecurityJacksonModules.getModules(classLoader, typeValidatorBuilder);
 		// Add WebauthnJacksonModule (excluded by default from SecurityJacksonModules)
-		modules.add(new WebauthnJacksonModule());
-		modules.add(webAuthnSessionModule);
+		ClassLoader classLoader = SecurityConfig.class.getClassLoader();
+		WebauthnJacksonModule webauthnJacksonModule = new WebauthnJacksonModule();
+		BasicPolymorphicTypeValidator.Builder typeValidatorBuilder = BasicPolymorphicTypeValidator.builder();
+		webauthnJacksonModule.configurePolymorphicTypeValidator(typeValidatorBuilder);
+		List<JacksonModule> modules = SecurityJacksonModules.getModules(classLoader, typeValidatorBuilder);
+		modules.add(webauthnJacksonModule);
 		return JsonMapper.builder().addModules(modules).build();
 	}
 
