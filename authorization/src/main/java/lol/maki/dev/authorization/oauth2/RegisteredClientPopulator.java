@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.boot.security.oauth2.server.authorization.autoconfigure.servlet.OAuth2AuthorizationServerProperties;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.oauth2.jose.jws.JwsAlgorithm;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
@@ -137,7 +138,7 @@ class RegisteredClientPopulator implements InitializingBean {
 			return builder.build();
 		}
 
-		private JwsAlgorithm jwsAlgorithm(String signingAlgorithm) {
+		private @Nullable JwsAlgorithm jwsAlgorithm(String signingAlgorithm) {
 			String name = signingAlgorithm.toUpperCase(Locale.ROOT);
 			JwsAlgorithm jwsAlgorithm = SignatureAlgorithm.from(name);
 			if (jwsAlgorithm == null) {
@@ -146,7 +147,7 @@ class RegisteredClientPopulator implements InitializingBean {
 			return jwsAlgorithm;
 		}
 
-		private SignatureAlgorithm signatureAlgorithm(String signatureAlgorithm) {
+		private @Nullable SignatureAlgorithm signatureAlgorithm(String signatureAlgorithm) {
 			return SignatureAlgorithm.from(signatureAlgorithm.toUpperCase(Locale.ROOT));
 		}
 
