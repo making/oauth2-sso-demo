@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import lol.maki.dev.authorization.BackChannelLogoutProps;
+import lol.maki.dev.authorization.RememberMeProps;
 import lol.maki.dev.authorization.JwtProperties;
 import lol.maki.dev.authorization.WebAuthnProps;
 import lol.maki.dev.authorization.oidc.BackChannelLogoutHandler;
@@ -43,6 +44,8 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.security.web.webauthn.jackson.WebauthnJacksonModule;
 import org.springframework.security.web.webauthn.management.JdbcPublicKeyCredentialUserEntityRepository;
@@ -59,12 +62,6 @@ import javax.sql.DataSource;
 
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
-
-	private final WebAuthnProps webAuthnProps;
-
-	public SecurityConfig(WebAuthnProps webAuthnProps) {
-		this.webAuthnProps = webAuthnProps;
-	}
 
 	@Bean
 	@Order(1)
@@ -85,7 +82,8 @@ public class SecurityConfig {
 	@Bean
 	@Order(2)
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
-			BackChannelLogoutHandler backChannelLogoutHandler) throws Exception {
+			BackChannelLogoutHandler backChannelLogoutHandler, PersistentTokenRepository persistentTokenRepository,
+			WebAuthnProps webAuthnProps, RememberMeProps rememberMeProps) {
 		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers(EndpointRequest.toAnyEndpoint())
 			.permitAll()
 			.requestMatchers("/css/**", "/js/**", "/login", "/signup", "/error")
@@ -93,10 +91,12 @@ public class SecurityConfig {
 			.anyRequest()
 			.authenticated())
 			.formLogin(form -> form.loginPage("/login"))
+			.rememberMe(rememberMe -> rememberMe.tokenRepository(persistentTokenRepository)
+				.tokenValiditySeconds((int) rememberMeProps.tokenValidity().toSeconds()))
 			.logout(logout -> logout.addLogoutHandler(backChannelLogoutHandler).logoutSuccessUrl("/login"))
-			.webAuthn(webauthn -> webauthn.rpName(this.webAuthnProps.rpName())
-				.rpId(this.webAuthnProps.rpId())
-				.allowedOrigins(this.webAuthnProps.allowedOrigins())
+			.webAuthn(webauthn -> webauthn.rpName(webAuthnProps.rpName())
+				.rpId(webAuthnProps.rpId())
+				.allowedOrigins(webAuthnProps.allowedOrigins())
 				.disableDefaultRegistrationPage(true));
 		return http.build();
 	}
@@ -197,6 +197,13 @@ public class SecurityConfig {
 	@Bean
 	public HttpSessionEventPublisher httpSessionEventPublisher() {
 		return new HttpSessionEventPublisher();
+	}
+
+	@Bean
+	public PersistentTokenRepository persistentTokenRepository(DataSource dataSource) {
+		JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+		tokenRepository.setDataSource(dataSource);
+		return tokenRepository;
 	}
 
 	@SuppressWarnings("deprecation")

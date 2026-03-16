@@ -181,6 +181,39 @@ class AuthorizationApplicationTests {
 				""");
 	}
 
+	@Test
+	void shouldLoginWithRememberMe() {
+		ResponseEntity<String> loginForm = this.restClient.get().uri("/login").retrieve().toEntity(String.class);
+		assertThat(loginForm.getStatusCode()).isEqualTo(HttpStatus.OK);
+		ResponseEntity<Void> login = this.restClient.post()
+			.uri("/login")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("username=%s&password=%s&remember-me=on&_csrf=%s".formatted("john@example.com", "password",
+					csrfToken(loginForm)))
+			.cookie("SESSION", sessionId(loginForm))
+			.retrieve()
+			.toBodilessEntity();
+		assertThat(login.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+		assertThat(login.getHeaders().getLocation()).hasPath("/");
+		String setCookieHeader = login.getHeaders()
+			.getValuesAsList(HttpHeaders.SET_COOKIE)
+			.stream()
+			.filter(c -> c.startsWith("remember-me="))
+			.findFirst()
+			.orElse(null);
+		assertThat(setCookieHeader).isNotNull();
+	}
+
+	@Test
+	void shouldNotSetRememberMeCookieWithoutCheckbox() {
+		ResponseEntity<Void> login = formLogin("john@example.com", "password");
+		boolean hasRememberMeCookie = login.getHeaders()
+			.getValuesAsList(HttpHeaders.SET_COOKIE)
+			.stream()
+			.anyMatch(c -> c.startsWith("remember-me="));
+		assertThat(hasRememberMeCookie).isFalse();
+	}
+
 	ResponseEntity<String> getSignupForm() {
 		ResponseEntity<String> signupForm = this.restClient.get().uri("/signup").retrieve().toEntity(String.class);
 		assertThat(signupForm.getStatusCode()).isEqualTo(HttpStatus.OK);

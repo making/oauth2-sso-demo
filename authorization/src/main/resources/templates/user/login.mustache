@@ -59,6 +59,13 @@
             >
         </div>
 
+        <div class="remember-me">
+            <label>
+                <input type="checkbox" name="remember-me" id="remember-me">
+                <span>Remember me</span>
+            </label>
+        </div>
+
         {{#_csrf}}
             <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
         {{/_csrf}}
