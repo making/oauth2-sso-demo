@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
-        <datasource-micrometer.version>2.2.0</datasource-micrometer.version>
+        <datasource-micrometer.version>2.2.1</datasource-micrometer.version>
         <!-- To address https://github.com/spring-projects/spring-security/pull/18354 -->
         <spring-security.version>7.1.0-M3</spring-security.version>
     </properties>
