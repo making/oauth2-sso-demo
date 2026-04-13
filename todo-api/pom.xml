@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
-        <datasource-micrometer.version>2.2.0</datasource-micrometer.version>
+        <datasource-micrometer.version>2.2.1</datasource-micrometer.version>
     </properties>
     <dependencies>
         <dependency>
