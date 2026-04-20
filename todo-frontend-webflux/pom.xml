@@ -78,7 +78,7 @@
         <dependency>
             <groupId>org.zalando</groupId>
             <artifactId>logbook-spring-boot-webflux-autoconfigure</artifactId>
-            <version>4.0.3</version>
+            <version>4.0.4</version>
         </dependency>
 
         <dependency>
